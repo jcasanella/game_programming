@@ -15,6 +15,9 @@
     <Filter Include="Source\Source">
       <UniqueIdentifier>{97977a97-8d34-481c-bf22-22c1a2176972}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{1a9d417e-121b-402a-af25-e6c8d09c33cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\private\glad.c">
@@ -23,5 +26,13 @@
     <ClCompile Include="source\private\main.cpp">
       <Filter>Source\Source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\VertexShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FragmentShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

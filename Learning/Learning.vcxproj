@@ -14,6 +14,10 @@
     <ClCompile Include="source\private\glad.c" />
     <ClCompile Include="source\private\main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\FragmentShader.glsl" />
+    <None Include="Shaders\VertexShader.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

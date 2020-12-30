@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 using namespace std;
 
@@ -11,6 +12,7 @@ void processInput(GLFWwindow* window);
 GLuint loadShader();
 GLuint prepareTriangle();
 void drawTriangle(GLuint vertexbuffer);
+const char* readFile(const char* fileName);
 
 int main() {
 	const int WIDTH = 800;
@@ -21,6 +23,9 @@ int main() {
 		cout << "Error initializing glfw" << endl;
 		return -1;
 	}
+
+	namespace fs = std::filesystem;
+	std::cout << "Current path is " << fs::current_path() << '\n';
 
 	glfwWindowHint(GLFW_SAMPLES, 4);								// Antialiasing 4
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);					// OpenGL 3.3
@@ -64,18 +69,22 @@ int main() {
 	return 0;
 }
 
-void readFile(const char* fileName)
+const char* readFile(const char* fileName)
 {
+	char* content = NULL;
 	ifstream inData(fileName);
 	if (inData.is_open()) {
 		inData.seekg(0, ios::end);
 		size_t fileSize = inData.tellg();
 		inData.seekg(0);
-		string content(fileSize + 1, '\0');
-		inData.read(&content[0], fileSize);
+		content = new char[fileSize + 1];
+		inData.read(content, fileSize);
+		content[fileSize] = '\0';
 	}
 
 	inData.close();
+
+	return content;
 }
 
 GLuint prepareTriangle() 
@@ -120,12 +129,7 @@ GLuint loadShader()
 	// Build and compile the vertex shader
 	// Version matches with the current Open GL version
 	// Define the input - in this case is aPos
-	const char* vertexShaderSource = "#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
-		" gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\n";
+	const char* vertexShaderSource = readFile("Shaders\\VertexShader.glsl");
 
 	GLuint vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -142,12 +146,7 @@ GLuint loadShader()
 	}
 
 	// Build Fragment Shader and compile it
-	const char* fragmentShaderSource = "#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		" FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\n";
+	const char* fragmentShaderSource = readFile("Shaders\\FragmentShader.glsl");
 
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
