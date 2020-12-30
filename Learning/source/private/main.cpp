@@ -180,6 +180,9 @@ GLuint loadShader()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	delete[] vertexShaderSource;
+	delete[] fragmentShaderSource;
+
 	return shaderProgram;
 }
 
