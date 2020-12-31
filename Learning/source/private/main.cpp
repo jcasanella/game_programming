@@ -5,6 +5,8 @@
 #include <fstream>
 #include <filesystem>
 
+#include <cassert>
+
 using namespace std;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -130,6 +132,7 @@ GLuint loadShader()
 	// Version matches with the current Open GL version
 	// Define the input - in this case is aPos
 	const char* vertexShaderSource = readFile("Shaders\\VertexShader.glsl");
+	assert(vertexShaderSource != NULL);
 
 	GLuint vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -147,6 +150,7 @@ GLuint loadShader()
 
 	// Build Fragment Shader and compile it
 	const char* fragmentShaderSource = readFile("Shaders\\FragmentShader.glsl");
+	assert(fragmentShaderSource != NULL);
 
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
