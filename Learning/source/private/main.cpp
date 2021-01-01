@@ -4,17 +4,26 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <vector>
 
 #include <cassert>
 
 using namespace std;
 
+const char* VERTEX_SHADER_LOCATION = "Shaders\\VertexShader.glsl";
+const char* VERTEX_SHADER_ERROR = "ERROR::SHADER::VERTEX::COMPILATION_FAILED";
+
+const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
+const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-GLuint loadShader();
+void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 GLuint prepareTriangle();
 void drawTriangle(GLuint vertexbuffer);
 const char* readFile(const char* fileName);
+GLuint buildShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
+GLuint buildShaderProgram(vector<GLuint> shadersVector);
+GLuint buildShaderAndProgram();
 
 int main() {
 	const int WIDTH = 800;
@@ -26,8 +35,10 @@ int main() {
 		return -1;
 	}
 
+#if DEBUG
 	namespace fs = std::filesystem;
 	std::cout << "Current path is " << fs::current_path() << '\n';
+#endif
 
 	glfwWindowHint(GLFW_SAMPLES, 4);								// Antialiasing 4
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);					// OpenGL 3.3
@@ -49,13 +60,12 @@ int main() {
 	}
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetKeyCallback(window, process_input_callback);
 
 	GLuint vertexBuffer = prepareTriangle();
-	GLuint programId = loadShader();
+	GLuint programId = buildShaderAndProgram();
 
 	while (!glfwWindowShouldClose(window)) {
-		processInput(window);
-
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -126,66 +136,68 @@ void drawTriangle(GLuint vertexbuffer)
 	glDisableVertexAttribArray(0);
 }
 
-GLuint loadShader()
+GLuint buildShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType) 
 {
-	// Build and compile the vertex shader
-	// Version matches with the current Open GL version
-	// Define the input - in this case is aPos
-	const char* vertexShaderSource = readFile("Shaders\\VertexShader.glsl");
-	assert(vertexShaderSource != NULL);
+	const char* shaderSource = readFile(shaderLocation);
+	assert(shaderSource != NULL);
 
-	GLuint vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+	GLuint shaderId = glCreateShader(shaderType);
+	assert(shaderId != 0);
+
+	glShaderSource(shaderId, 1, &shaderSource, NULL);
+	glCompileShader(shaderId);
 
 	// Check if vertex shader compilation worked
 	GLint success;
 	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
 	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED" << endl << infoLog << endl;
+		glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
+		cout << errorMessage << endl << infoLog << endl;
 	}
 
-	// Build Fragment Shader and compile it
-	const char* fragmentShaderSource = readFile("Shaders\\FragmentShader.glsl");
-	assert(fragmentShaderSource != NULL);
+	delete[] shaderSource;
 
-	GLuint fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
+	return shaderId;
+}
 
-	// Check if fragment shader compiation worked
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		memset(infoLog, 0, 512);
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED" << endl << infoLog << endl;
-	}
-
+GLuint buildShaderProgram(vector<GLuint> shadersVector)
+{
 	// Link the different shaders
-	GLuint shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
+	GLuint shaderProgram = glCreateProgram();
+	assert(shaderProgram != 0);
+
+	GLint success;
+	char infoLog[512];
+
+	for (vector<GLuint>::iterator it = shadersVector.begin(); it != shadersVector.end(); ++it) {
+		glAttachShader(shaderProgram, *it);
+	}
+
+
 	glLinkProgram(shaderProgram);
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
-		memset(infoLog, 0, 512);
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		cout << "ERROR::SHADERPROGRAM::LINK_FAILED" << endl << infoLog << endl;
 	}
 
-	glDetachShader(shaderProgram, vertexShader);
-	glDetachShader(shaderProgram, fragmentShader);
+	for (vector<GLuint>::iterator it = shadersVector.begin(); it != shadersVector.end(); ++it) {
+		glDetachShader(shaderProgram, *it);
+		glDeleteShader(*it);
+	}
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	return shaderProgram;
+}
 
-	delete[] vertexShaderSource;
-	delete[] fragmentShaderSource;
+GLuint buildShaderAndProgram()
+{
+	GLuint vertexShader = buildShader(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
+	GLuint fragmentShader = buildShader(FRAGMENT_SHADER_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
+
+	vector<GLuint> shaderVector = { vertexShader, fragmentShader };
+
+	GLuint shaderProgram = buildShaderProgram(shaderVector);
 
 	return shaderProgram;
 }
@@ -195,9 +207,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow* window) 
+void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
+	}
+
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+		cout << "Space pressed" << endl;
 	}
 }
