@@ -5,6 +5,7 @@
 #include <fstream>
 #include <filesystem>
 #include <vector>
+#include <tuple>
 
 #include <cassert>
 
@@ -14,6 +15,7 @@ const char* VERTEX_SHADER_LOCATION = "Shaders\\VertexShader.glsl";
 const char* VERTEX_SHADER_ERROR = "ERROR::SHADER::VERTEX::COMPILATION_FAILED";
 
 const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
+const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -23,7 +25,7 @@ void drawTriangle(GLuint vertexbuffer);
 const char* readFile(const char* fileName);
 GLuint buildShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
 GLuint buildShaderProgram(vector<GLuint> shadersVector);
-GLuint buildShaderAndProgram();
+GLuint buildShaderAndProgram(vector<tuple<const char*, const char*, GLuint>> shaders);
 
 int main() {
 	const int WIDTH = 800;
@@ -63,7 +65,13 @@ int main() {
 	glfwSetKeyCallback(window, process_input_callback);
 
 	GLuint vertexBuffer = prepareTriangle();
-	GLuint programId = buildShaderAndProgram();
+
+	auto vertex = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
+	auto fragment = make_tuple(FRAGMENT_SHADER_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
+	vector<tuple<const char*, const char*, GLuint>> shadersVector;
+	shadersVector.push_back(vertex);
+	shadersVector.push_back(fragment);
+	GLuint programId = buildShaderAndProgram(shadersVector);
 
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -76,6 +84,8 @@ int main() {
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	glDeleteProgram(programId);
 
 	glfwTerminate();
 	return 0;
@@ -190,12 +200,18 @@ GLuint buildShaderProgram(vector<GLuint> shadersVector)
 	return shaderProgram;
 }
 
-GLuint buildShaderAndProgram()
+GLuint buildShaderAndProgram(vector<tuple<const char*, const char*, GLuint>> shaders)
 {
-	GLuint vertexShader = buildShader(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
-	GLuint fragmentShader = buildShader(FRAGMENT_SHADER_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
+	vector<GLuint> shaderVector;
+	for (std::vector<tuple<const char*, const char*, GLuint>>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+		GLuint shaderId = buildShader(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it));
+		shaderVector.push_back(shaderId);
+	}
 
-	vector<GLuint> shaderVector = { vertexShader, fragmentShader };
+	//GLuint vertexShader = buildShader(std::get<0>(shaders), std::get<1>(shaders), std::get<2>(shaders));
+	//GLuint fragmentShader = buildShader(FRAGMENT_SHADER_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
+
+	//vector<GLuint> shaderVector = { vertexShader, fragmentShader };
 
 	GLuint shaderProgram = buildShaderProgram(shaderVector);
 
