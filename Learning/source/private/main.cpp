@@ -18,13 +18,15 @@ const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
 const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
 
+bool isClicked = false;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 GLuint prepareTriangle();
 void drawTriangle(GLuint vertexbuffer);
 const char* readFile(const char* fileName);
-GLuint buildShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
-GLuint buildShaderProgram(vector<GLuint> shadersVector);
+GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
+GLuint compileShaderProgram(vector<GLuint> shadersVector);
 GLuint buildShaderAndProgram(vector<tuple<const char*, const char*, GLuint>> shaders);
 
 int main() {
@@ -66,18 +68,23 @@ int main() {
 
 	GLuint vertexBuffer = prepareTriangle();
 
+	// First Shader program
 	auto vertex = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
 	auto fragment = make_tuple(FRAGMENT_SHADER_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
-	vector<tuple<const char*, const char*, GLuint>> shadersVector;
-	shadersVector.push_back(vertex);
-	shadersVector.push_back(fragment);
+	vector<tuple<const char*, const char*, GLuint>> shadersVector = { vertex, fragment };
 	GLuint programId = buildShaderAndProgram(shadersVector);
+
+	// Second Shader program
+	auto vertex2 = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
+	auto fragment2 = make_tuple(FRAGMENT_SHADER2_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
+	vector<tuple<const char*, const char*, GLuint>> shadersVector2 = { vertex2, fragment2 };
+	GLuint programId2 = buildShaderAndProgram(shadersVector2);
 
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-		glUseProgram(programId);
+		glUseProgram(!isClicked ? programId : programId2);
 
 		drawTriangle(vertexBuffer);
 
@@ -86,6 +93,7 @@ int main() {
 	}
 
 	glDeleteProgram(programId);
+	glDeleteProgram(programId2);
 
 	glfwTerminate();
 	return 0;
@@ -146,7 +154,7 @@ void drawTriangle(GLuint vertexbuffer)
 	glDisableVertexAttribArray(0);
 }
 
-GLuint buildShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType) 
+GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType) 
 {
 	const char* shaderSource = readFile(shaderLocation);
 	assert(shaderSource != NULL);
@@ -171,7 +179,7 @@ GLuint buildShader(const char* shaderLocation, const char* errorMessage, GLuint 
 	return shaderId;
 }
 
-GLuint buildShaderProgram(vector<GLuint> shadersVector)
+GLuint compileShaderProgram(vector<GLuint> shadersVector)
 {
 	// Link the different shaders
 	GLuint shaderProgram = glCreateProgram();
@@ -204,16 +212,11 @@ GLuint buildShaderAndProgram(vector<tuple<const char*, const char*, GLuint>> sha
 {
 	vector<GLuint> shaderVector;
 	for (std::vector<tuple<const char*, const char*, GLuint>>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
-		GLuint shaderId = buildShader(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it));
+		GLuint shaderId = compileShader(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it));
 		shaderVector.push_back(shaderId);
 	}
 
-	//GLuint vertexShader = buildShader(std::get<0>(shaders), std::get<1>(shaders), std::get<2>(shaders));
-	//GLuint fragmentShader = buildShader(FRAGMENT_SHADER_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
-
-	//vector<GLuint> shaderVector = { vertexShader, fragmentShader };
-
-	GLuint shaderProgram = buildShaderProgram(shaderVector);
+	GLuint shaderProgram = compileShaderProgram(shaderVector);
 
 	return shaderProgram;
 }
@@ -230,6 +233,7 @@ void process_input_callback(GLFWwindow* window, int key, int scancode, int actio
 	}
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+		isClicked = !isClicked;
 		cout << "Space pressed" << endl;
 	}
 }
