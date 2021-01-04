@@ -23,7 +23,7 @@ bool isClicked = false;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 GLuint prepareTriangle();
-void drawTriangle(GLuint vertexbuffer);
+void drawTriangle(GLuint VAO);
 const char* readFile(const char* fileName);
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
 GLuint compileShaderProgram(vector<GLuint> shadersVector);
@@ -66,7 +66,11 @@ int main() {
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetKeyCallback(window, process_input_callback);
 
-	GLuint vertexBuffer = prepareTriangle();
+	// a VAO that stores our vertex attribute configurationand which VBO to use. Usually when you have multiple
+	// objects you want to draw, you first generate / configure all the VAOs(and thus the required VBO and
+	// attribute pointers) and store those for later use.The moment we want to draw one of our objects, we
+	// take the corresponding VAO, bind it, then draw the object and unbind the VAO again.
+	GLuint VAO = prepareTriangle();
 
 	// First Shader program
 	auto vertex = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
@@ -84,9 +88,11 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
+		// Use our shader program before to render
 		glUseProgram(!isClicked ? programId : programId2);
 
-		drawTriangle(vertexBuffer);
+		// Draw the object
+		drawTriangle(VAO);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -119,9 +125,14 @@ const char* readFile(const char* fileName)
 
 GLuint prepareTriangle() 
 {
-	GLuint vertexArrayId;
-	glGenVertexArrays(1, &vertexArrayId);
-	glBindVertexArray(vertexArrayId);
+	// A Vertex Array Object (VAO) is an object which contains one or more Vertex Buffer Objects and is designed to store the information 
+	// for a complete rendered object. Can contain multiples VBO
+	// Contains the following info:
+	// - Calls to glEnableVertexAttribArray or glDisableVertexAttrib Array
+	// - Vertex attribute configurations via glVertexAttribPointer and objects associated via glVertexAttribPointer
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
 	static const GLfloat g_vertex_buffer_data[] = {
 		-1.0f, -1.0f, 0.0f,
@@ -129,18 +140,16 @@ GLuint prepareTriangle()
 		0.0f,  1.0f, 0.0f,
 	};
 
-	GLuint vertexBuffer;
-	glGenBuffers(1, &vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	// A Vertex Buffer Object(VBO) is a memory buffer in the GPU designed to hold information about vertices. VBOs can also store information such as normals, 
+	// texcoords, indices, etc.
+	GLuint VBO;
+	glGenBuffers(1, &VBO);
+
+	// Copy our vertices array into a buffer to be used by OpenGL
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	return vertexBuffer;
-}
-
-void drawTriangle(GLuint vertexbuffer) 
-{
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	// Set the vertex attribute pointers
 	glVertexAttribPointer(
 		0,                  // same as location in the vertex shader location
 		3,                  // size - it's a vec3 so it contains 3 values
@@ -149,9 +158,22 @@ void drawTriangle(GLuint vertexbuffer)
 		3 * sizeof(float),  // stride, where it starts the next vertex
 		(void*)0            // desfase del buffer
 	);
-	// Dibujar el triángulo !
+
+	glBindVertexArray(0);	// unbind VAO
+
+	return VAO;
+}
+
+void drawTriangle(GLuint VAO) 
+{
+	glBindVertexArray(VAO);
+	glEnableVertexAttribArray(0);	// sme as location in the vertex shader
+
+	// Draw triangle
 	glDrawArrays(GL_TRIANGLES, 0, 3); // Empezar desde el vértice 0S; 3 vértices en total -> 1 triángulo
-	glDisableVertexAttribArray(0);
+
+	glDisableVertexAttribArray(0);	// sme as location in the vertex shader
+	glBindVertexArray(0);	// this unbinds
 }
 
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType) 
