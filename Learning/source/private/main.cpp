@@ -26,8 +26,8 @@ GLuint prepareTriangle();
 void drawTriangle(GLuint VAO);
 const char* readFile(const char* fileName);
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
-GLuint compileShaderProgram(vector<GLuint> shadersVector);
-GLuint buildShaderAndProgram(vector<tuple<const char*, const char*, GLuint>> shaders);
+GLuint compileShaderProgram(const vector<GLuint>& shadersVector);
+GLuint buildShaderAndProgram(const vector<tuple<const char*, const char*, GLuint>>& shaders);
 
 int main() {
 	const int WIDTH = 800;
@@ -201,7 +201,7 @@ GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuin
 	return shaderId;
 }
 
-GLuint compileShaderProgram(vector<GLuint> shadersVector)
+GLuint compileShaderProgram(const vector<GLuint>& shadersVector)
 {
 	// Link the different shaders
 	GLuint shaderProgram = glCreateProgram();
@@ -210,7 +210,7 @@ GLuint compileShaderProgram(vector<GLuint> shadersVector)
 	GLint success;
 	char infoLog[512];
 
-	for (vector<GLuint>::iterator it = shadersVector.begin(); it != shadersVector.end(); ++it) {
+	for (vector<GLuint>::const_iterator it = shadersVector.begin(); it != shadersVector.end(); ++it) {
 		glAttachShader(shaderProgram, *it);
 	}
 
@@ -222,7 +222,7 @@ GLuint compileShaderProgram(vector<GLuint> shadersVector)
 		cout << "ERROR::SHADERPROGRAM::LINK_FAILED" << endl << infoLog << endl;
 	}
 
-	for (vector<GLuint>::iterator it = shadersVector.begin(); it != shadersVector.end(); ++it) {
+	for (vector<GLuint>::const_iterator it = shadersVector.begin(); it != shadersVector.end(); ++it) {
 		glDetachShader(shaderProgram, *it);
 		glDeleteShader(*it);
 	}
@@ -230,10 +230,10 @@ GLuint compileShaderProgram(vector<GLuint> shadersVector)
 	return shaderProgram;
 }
 
-GLuint buildShaderAndProgram(vector<tuple<const char*, const char*, GLuint>> shaders)
+GLuint buildShaderAndProgram(const vector<tuple<const char*, const char*, GLuint>>& shaders)
 {
 	vector<GLuint> shaderVector;
-	for (std::vector<tuple<const char*, const char*, GLuint>>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+	for (std::vector<tuple<const char*, const char*, GLuint>>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
 		GLuint shaderId = compileShader(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it));
 		shaderVector.push_back(shaderId);
 	}
