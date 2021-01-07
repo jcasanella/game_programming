@@ -9,7 +9,9 @@ Required dependencies:
 
 ## Current Status
 
-Just draw a triangle, using vertex and fragment shader.
+Draw either a triangle or a rectangle using vertex and fragment shader. We can change from triangle to rectangle
+pressing **a** key.  With **space** key we can change the color.
 With *Esc* key you will exit the application.
 
 ![triangle with shaders](images/triangle1.PNG)
+![rectangle with shaders](images/rectangle1.PNG)

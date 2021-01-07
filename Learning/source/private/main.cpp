@@ -18,14 +18,15 @@ const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
 const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
 
-bool isClicked = false;
+enum DrawType { TRIANGLE, RECTANGLE };
+DrawType g_type = TRIANGLE;
+bool g_isClicked = false;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 GLuint prepareRectangle();
-void drawRectangle(GLuint VAO);
 GLuint prepareTriangle();
-void drawTriangle(GLuint VAO);
+void draw(GLuint VAO, DrawType type);
 const char* readFile(const char* fileName);
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
 GLuint compileShaderProgram(const vector<GLuint>& shadersVector);
@@ -72,9 +73,8 @@ int main() {
 	// objects you want to draw, you first generate / configure all the VAOs(and thus the required VBO and
 	// attribute pointers) and store those for later use.The moment we want to draw one of our objects, we
 	// take the corresponding VAO, bind it, then draw the object and unbind the VAO again.
-	//GLuint VAO = prepareTriangle();
-
-	GLuint VAO = prepareRectangle();
+	GLuint VAO1 = prepareTriangle();
+	GLuint VAO2 = prepareRectangle();
 
 	// First Shader program
 	auto vertex = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
@@ -93,11 +93,15 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
 		// Use our shader program before to render
-		glUseProgram(!isClicked ? programId : programId2);
+		glUseProgram(!g_isClicked ? programId : programId2);
 
 		// Draw the object
-		//drawTriangle(VAO);
-		drawRectangle(VAO);
+		if (g_type == TRIANGLE) {
+			draw(VAO1, g_type);
+		}
+		else {
+			draw(VAO2, g_type);
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -182,12 +186,17 @@ GLuint prepareRectangle()
 	return VAO;
 }
 
-void drawRectangle(GLuint VAO)
+void draw(GLuint VAO, DrawType drawType)
 {
 	glBindVertexArray(VAO);
 	glEnableVertexAttribArray(0);	// sme as location in the vertex shader
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Draw Rectangle
+	if (drawType == TRIANGLE) {
+		glDrawArrays(GL_TRIANGLES, 0, 3); // Draw Triangle
+	}
+	else {
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Draw Rectangle
+	}
 
 	glDisableVertexAttribArray(0);	// sme as location in the vertex shader
 	glBindVertexArray(0);	// this unbinds
@@ -232,18 +241,6 @@ GLuint prepareTriangle()
 	glBindVertexArray(0);	// unbind VAO
 
 	return VAO;
-}
-
-void drawTriangle(GLuint VAO) 
-{
-	glBindVertexArray(VAO);
-	glEnableVertexAttribArray(0);	// sme as location in the vertex shader
-
-	// Draw triangle
-	glDrawArrays(GL_TRIANGLES, 0, 3); // Empezar desde el vértice 0S; 3 vértices en total -> 1 triángulo
-
-	glDisableVertexAttribArray(0);	// sme as location in the vertex shader
-	glBindVertexArray(0);	// this unbinds
 }
 
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType) 
@@ -325,7 +322,18 @@ void process_input_callback(GLFWwindow* window, int key, int scancode, int actio
 	}
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-		isClicked = !isClicked;
-		cout << "Space pressed" << endl;
+		g_isClicked = !g_isClicked;
+		cout << "Space pressed, changing color" << endl;
+	}
+
+	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+		if (g_type == TRIANGLE) {
+			g_type = RECTANGLE;
+			cout << "A pressed, drawing a Rectangle" << endl;
+		}
+		else {
+			g_type = TRIANGLE;
+			cout << "A pressed, drawing a Triangle" << endl;
+		}
 	}
 }
