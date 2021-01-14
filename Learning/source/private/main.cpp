@@ -30,7 +30,6 @@ GLuint prepareDoubleTriangle();
 GLuint prepareTriangle1();
 GLuint prepareTriangle2();
 void draw(GLuint VAO);
-void draw(GLuint VAO1, GLuint VAO2);
 const char* readFile(const char* fileName);
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
 GLuint compileShaderProgram(const vector<GLuint>& shadersVector);
@@ -114,7 +113,8 @@ int main() {
 			draw(VAO3);
 		}
 		else {
-			draw(VAO4, VAO5);
+			draw(VAO4);
+			draw(VAO5);
 		}
 
 		glfwSwapBuffers(window);
@@ -205,7 +205,7 @@ void draw(GLuint VAO)
 	glBindVertexArray(VAO);
 	glEnableVertexAttribArray(0);	// same as location in the vertex shader
 
-	if (g_type == TRIANGLE) {
+	if (g_type == TRIANGLE || g_type == MULTIPLE_VAO) {
 		glDrawArrays(GL_TRIANGLES, 0, 3); 
 	}
 	else if (g_type == DOUBLE_TRIANGLE) {
@@ -214,25 +214,6 @@ void draw(GLuint VAO)
 	else {
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); 
 	}
-
-	glDisableVertexAttribArray(0);	// same as location in the vertex shader
-	glBindVertexArray(0);			// unbinds
-}
-
-void draw(GLuint VAO1, GLuint VAO2)
-{
-	glBindVertexArray(VAO1);
-	glEnableVertexAttribArray(0);	// same as location in the vertex shader
-
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-
-	glDisableVertexAttribArray(0);	// same as location in the vertex shader
-	glBindVertexArray(0);			// unbinds
-
-	glBindVertexArray(VAO2);
-	glEnableVertexAttribArray(0);	// same as location in the vertex shader
-
-	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	glDisableVertexAttribArray(0);	// same as location in the vertex shader
 	glBindVertexArray(0);			// unbinds
@@ -492,15 +473,15 @@ void process_input_callback(GLFWwindow* window, int key, int scancode, int actio
 	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
 		if (g_type == TRIANGLE) {
 			g_type = DOUBLE_TRIANGLE;
-			cout << "A pressed, drawing a Rectangle" << endl;
+			cout << "A pressed, drawing a Double Triangle" << endl;
 		}
 		else if (g_type == DOUBLE_TRIANGLE) {
 			g_type = RECTANGLE;
-			cout << "A pressed, drawing a Double Triangle using more than one VAO" << endl;
+			cout << "A pressed, drawing a Rectangle" << endl;
 		}
 		else if (g_type == RECTANGLE) {
 			g_type = MULTIPLE_VAO;
-			cout << "A pressed, drawing a Double Triangle" << endl;
+			cout << "A pressed, drawing a Double Triangle with multiples VAO" << endl;
 		}
 		else {
 			g_type = TRIANGLE;
