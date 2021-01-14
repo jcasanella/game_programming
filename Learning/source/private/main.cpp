@@ -18,7 +18,7 @@ const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
 const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
 
-enum DrawType { TRIANGLE, RECTANGLE, DOUBLE_TRIANGLE };
+enum DrawType { TRIANGLE, RECTANGLE, DOUBLE_TRIANGLE, MULTIPLE_VAO };
 DrawType g_type = TRIANGLE;
 bool g_isClicked = false;
 
@@ -27,7 +27,10 @@ void process_input_callback(GLFWwindow* window, int key, int scancode, int actio
 GLuint prepareRectangle();
 GLuint prepareTriangle();
 GLuint prepareDoubleTriangle();
+GLuint prepareTriangle1();
+GLuint prepareTriangle2();
 void draw(GLuint VAO);
+void draw(GLuint VAO1, GLuint VAO2);
 const char* readFile(const char* fileName);
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
 GLuint compileShaderProgram(const vector<GLuint>& shadersVector);
@@ -78,6 +81,9 @@ int main() {
 	GLuint VAO2 = prepareRectangle();
 	GLuint VAO3 = prepareDoubleTriangle();
 
+	GLuint VAO4 = prepareTriangle1();
+	GLuint VAO5 = prepareTriangle2();
+
 	// First Shader program
 	auto vertex = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
 	auto fragment = make_tuple(FRAGMENT_SHADER_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
@@ -104,8 +110,11 @@ int main() {
 		else if (g_type == RECTANGLE) {
 			draw(VAO2);
 		}
-		else {
+		else if (g_type == DOUBLE_TRIANGLE) {
 			draw(VAO3);
+		}
+		else {
+			draw(VAO4, VAO5);
 		}
 
 		glfwSwapBuffers(window);
@@ -194,7 +203,7 @@ GLuint prepareRectangle()
 void draw(GLuint VAO)
 {
 	glBindVertexArray(VAO);
-	glEnableVertexAttribArray(0);	// sme as location in the vertex shader
+	glEnableVertexAttribArray(0);	// same as location in the vertex shader
 
 	if (g_type == TRIANGLE) {
 		glDrawArrays(GL_TRIANGLES, 0, 3); 
@@ -205,6 +214,25 @@ void draw(GLuint VAO)
 	else {
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); 
 	}
+
+	glDisableVertexAttribArray(0);	// same as location in the vertex shader
+	glBindVertexArray(0);			// unbinds
+}
+
+void draw(GLuint VAO1, GLuint VAO2)
+{
+	glBindVertexArray(VAO1);
+	glEnableVertexAttribArray(0);	// same as location in the vertex shader
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	glDisableVertexAttribArray(0);	// same as location in the vertex shader
+	glBindVertexArray(0);			// unbinds
+
+	glBindVertexArray(VAO2);
+	glEnableVertexAttribArray(0);	// same as location in the vertex shader
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	glDisableVertexAttribArray(0);	// same as location in the vertex shader
 	glBindVertexArray(0);			// unbinds
@@ -267,6 +295,88 @@ GLuint prepareDoubleTriangle()
 		-1.0f, 1.0f, 0.0f,	// Left Up Triangle1 
 		0.0f,  0.0f, 0.0f,	// Middle Triangle1
 
+		0.0f, -1.0f, 0.0f,	// Left Bottom Triangle2
+		0.0f, 1.0f, 0.0f,	// Left Up Triangle2
+		1.0f, 0.0f, 0.0f,	// Middle Triangle2
+	};
+
+	// A Vertex Buffer Object(VBO) is a memory buffer in the GPU designed to hold information about vertices. VBOs can also store information such as normals, 
+	// texcoords, indices, etc.
+	GLuint VBO;
+	glGenBuffers(1, &VBO);
+
+	// Copy our vertices array into a buffer to be used by OpenGL
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+
+	// Set the vertex attribute pointers
+	glVertexAttribPointer(
+		0,                  // same as location in the vertex shader location
+		3,                  // size - it's a vec3 so it contains 3 values
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		3 * sizeof(float),  // stride, where it starts the next vertex
+		(void*)0            // desfase del buffer
+	);
+
+	glBindVertexArray(0);	// unbind VAO
+
+	return VAO;
+}
+
+GLuint prepareTriangle1()
+{
+	// A Vertex Array Object (VAO) is an object which contains one or more Vertex Buffer Objects and is designed to store the information 
+	// for a complete rendered object. Can contain multiples VBO
+	// Contains the following info:
+	// - Calls to glEnableVertexAttribArray or glDisableVertexAttrib Array
+	// - Vertex attribute configurations via glVertexAttribPointer and objects associated via glVertexAttribPointer
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	const GLfloat vertex_buffer_data[] = {
+		-1.0f, -1.0f, 0.0f,	// Left Bottom Triangle1
+		-1.0f, 1.0f, 0.0f,	// Left Up Triangle1 
+		0.0f,  0.0f, 0.0f,	// Middle Triangle1
+	};
+
+	// A Vertex Buffer Object(VBO) is a memory buffer in the GPU designed to hold information about vertices. VBOs can also store information such as normals, 
+	// texcoords, indices, etc.
+	GLuint VBO;
+	glGenBuffers(1, &VBO);
+
+	// Copy our vertices array into a buffer to be used by OpenGL
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+
+	// Set the vertex attribute pointers
+	glVertexAttribPointer(
+		0,                  // same as location in the vertex shader location
+		3,                  // size - it's a vec3 so it contains 3 values
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		3 * sizeof(float),  // stride, where it starts the next vertex
+		(void*)0            // desfase del buffer
+	);
+
+	glBindVertexArray(0);	// unbind VAO
+
+	return VAO;
+}
+
+GLuint prepareTriangle2()
+{
+	// A Vertex Array Object (VAO) is an object which contains one or more Vertex Buffer Objects and is designed to store the information 
+	// for a complete rendered object. Can contain multiples VBO
+	// Contains the following info:
+	// - Calls to glEnableVertexAttribArray or glDisableVertexAttrib Array
+	// - Vertex attribute configurations via glVertexAttribPointer and objects associated via glVertexAttribPointer
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	const GLfloat vertex_buffer_data[] = {
 		0.0f, -1.0f, 0.0f,	// Left Bottom Triangle2
 		0.0f, 1.0f, 0.0f,	// Left Up Triangle2
 		1.0f, 0.0f, 0.0f,	// Middle Triangle2
@@ -381,11 +491,15 @@ void process_input_callback(GLFWwindow* window, int key, int scancode, int actio
 
 	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
 		if (g_type == TRIANGLE) {
-			g_type = RECTANGLE;
+			g_type = DOUBLE_TRIANGLE;
 			cout << "A pressed, drawing a Rectangle" << endl;
 		}
+		else if (g_type == DOUBLE_TRIANGLE) {
+			g_type = RECTANGLE;
+			cout << "A pressed, drawing a Double Triangle using more than one VAO" << endl;
+		}
 		else if (g_type == RECTANGLE) {
-			g_type = DOUBLE_TRIANGLE;
+			g_type = MULTIPLE_VAO;
 			cout << "A pressed, drawing a Double Triangle" << endl;
 		}
 		else {
