@@ -7,20 +7,20 @@
 #include <vector>
 #include <tuple>
 
+#include "Window.h"
+
 #include <cassert>
 
 using namespace std;
 
 const char* VERTEX_SHADER_LOCATION = "Shaders\\VertexShader.glsl";
+const char* VERTEX_SHADER_A_LOCATION = "Shaders\\VertexShaderA.glsl";
 const char* VERTEX_SHADER_ERROR = "ERROR::SHADER::VERTEX::COMPILATION_FAILED";
 
 const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
+const char* FRAGMENT_SHADER_A_LOCATION = "Shaders\\FragmentShaderA.glsl";
 const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
-
-enum DrawType { TRIANGLE, RECTANGLE, DOUBLE_TRIANGLE, MULTIPLE_VAO };
-DrawType g_type = TRIANGLE;
-bool g_isClicked = false;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -29,8 +29,7 @@ GLuint prepareTriangle();
 GLuint prepareDoubleTriangle();
 GLuint prepareTriangle1();
 GLuint prepareTriangle2();
-void draw(GLuint VAO);
-const char* readFile(const char* fileName);
+const char* readFile(const char*);
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
 GLuint compileShaderProgram(const vector<GLuint>& shadersVector);
 GLuint buildShaderAndProgram(const vector<tuple<const char*, const char*, GLuint>>& shaders);
@@ -40,37 +39,19 @@ int main() {
 	const int HEIGHT = 600;
 	const char* TITLE = "LearnOpenGL";
 
-	if (!glfwInit()) {
-		cout << "Error initializing glfw" << endl;
-		return -1;
-	}
+	Window* pWindow = new Window(WIDTH, HEIGHT, TITLE);
+	pWindow->Init();
+	pWindow->BuildWindow();
 
 #if DEBUG
 	namespace fs = std::filesystem;
 	std::cout << "Current path is " << fs::current_path() << '\n';
 #endif
 
-	glfwWindowHint(GLFW_SAMPLES, 4);								// Antialiasing 4
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);					// OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);			// mac os  compability
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	// only new open gl
-
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, NULL, NULL);
-	if (window == NULL) {
-		cout << "Failed to create GLFW window" << endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window); 
-
 	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
 		cout << "Failed to init GLAD" << endl;
 		return -1;
 	}
-
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetKeyCallback(window, process_input_callback);
 
 	// a VAO that stores our vertex attribute configurationand which VBO to use. Usually when you have multiple
 	// objects you want to draw, you first generate / configure all the VAOs(and thus the required VBO and
@@ -84,8 +65,8 @@ int main() {
 	GLuint VAO5 = prepareTriangle2();
 
 	// First Shader program
-	auto vertex = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
-	auto fragment = make_tuple(FRAGMENT_SHADER_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
+	auto vertex = make_tuple(VERTEX_SHADER_A_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
+	auto fragment = make_tuple(FRAGMENT_SHADER_A_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
 	vector<tuple<const char*, const char*, GLuint>> shadersVector = { vertex, fragment };
 	GLuint programId = buildShaderAndProgram(shadersVector);
 
@@ -95,36 +76,12 @@ int main() {
 	vector<tuple<const char*, const char*, GLuint>> shadersVector2 = { vertex2, fragment2 };
 	GLuint programId2 = buildShaderAndProgram(shadersVector2);
 
-	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
-		// Use our shader program before to render
-		glUseProgram(!g_isClicked ? programId : programId2);
-
-		// Draw the object
-		if (g_type == TRIANGLE) {
-			draw(VAO1);
-		}
-		else if (g_type == RECTANGLE) {
-			draw(VAO2);
-		}
-		else if (g_type == DOUBLE_TRIANGLE) {
-			draw(VAO3);
-		}
-		else {
-			draw(VAO4);
-			draw(VAO5);
-		}
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
+	pWindow->RenderLoop(programId, programId2, VAO1, VAO2, VAO3, VAO4, VAO5);
 
 	glDeleteProgram(programId);
 	glDeleteProgram(programId2);
 
-	glfwTerminate();
+	delete pWindow;
 	return 0;
 }
 
@@ -198,25 +155,6 @@ GLuint prepareRectangle()
 	glBindVertexArray(0);	// unbind VAO
 
 	return VAO;
-}
-
-void draw(GLuint VAO)
-{
-	glBindVertexArray(VAO);
-	glEnableVertexAttribArray(0);	// same as location in the vertex shader
-
-	if (g_type == TRIANGLE || g_type == MULTIPLE_VAO) {
-		glDrawArrays(GL_TRIANGLES, 0, 3); 
-	}
-	else if (g_type == DOUBLE_TRIANGLE) {
-		glDrawArrays(GL_TRIANGLES, 0, 6); 
-	}
-	else {
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); 
-	}
-
-	glDisableVertexAttribArray(0);	// same as location in the vertex shader
-	glBindVertexArray(0);			// unbinds
 }
 
 GLuint prepareTriangle() 
@@ -452,40 +390,4 @@ GLuint buildShaderAndProgram(const vector<tuple<const char*, const char*, GLuint
 	GLuint shaderProgram = compileShaderProgram(shaderVector);
 
 	return shaderProgram;
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) 
-{
-	glViewport(0, 0, width, height);
-}
-
-void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
-	}
-
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-		g_isClicked = !g_isClicked;
-		cout << "Space pressed, changing color" << endl;
-	}
-
-	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-		if (g_type == TRIANGLE) {
-			g_type = DOUBLE_TRIANGLE;
-			cout << "A pressed, drawing a Double Triangle" << endl;
-		}
-		else if (g_type == DOUBLE_TRIANGLE) {
-			g_type = RECTANGLE;
-			cout << "A pressed, drawing a Rectangle" << endl;
-		}
-		else if (g_type == RECTANGLE) {
-			g_type = MULTIPLE_VAO;
-			cout << "A pressed, drawing a Double Triangle with multiples VAO" << endl;
-		}
-		else {
-			g_type = TRIANGLE;
-			cout << "A pressed, drawing a Triangle" << endl;
-		}
-	}
 }

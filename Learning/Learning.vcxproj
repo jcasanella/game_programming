@@ -13,10 +13,17 @@
   <ItemGroup>
     <ClCompile Include="source\private\glad.c" />
     <ClCompile Include="source\private\main.cpp" />
+    <ClCompile Include="source\private\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\FragmentShader.glsl" />
+    <None Include="Shaders\FragmentShader2.glsl" />
+    <None Include="Shaders\FragmentShaderA.glsl" />
     <None Include="Shaders\VertexShader.glsl" />
+    <None Include="Shaders\VertexShaderA.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\header\Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -53,7 +60,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\development\glad\include;D:\development\glfw-3.3.2\buid\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\development\projects\opengl\GameProject\Learning\source\header;D:\development\glad\include;D:\development\glfw-3.3.2\buid\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\development\glfw-3.3.2\buid\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(ProjectName)\$(Configuration)\output\</OutDir>
     <IntDir>$(SolutionDir)\$(ProjectName)\$(Configuration)\intermediate\</IntDir>

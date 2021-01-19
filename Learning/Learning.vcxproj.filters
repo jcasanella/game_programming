@@ -26,6 +26,9 @@
     <ClCompile Include="source\private\main.cpp">
       <Filter>Source\Source</Filter>
     </ClCompile>
+    <ClCompile Include="source\private\Window.cpp">
+      <Filter>Source\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\VertexShader.glsl">
@@ -34,5 +37,19 @@
     <None Include="Shaders\FragmentShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\FragmentShader2.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\VertexShaderA.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FragmentShaderA.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\header\Window.h">
+      <Filter>Source\Header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
