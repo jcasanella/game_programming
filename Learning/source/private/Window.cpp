@@ -11,7 +11,7 @@ void framebuffer_size_callback(GLFWwindow*, int width, int height);
 void process_input_callback(GLFWwindow*, int key, int scancode, int action, int mods);
 
 // Class starts here
-Window::Window(int width, int height, const char* title)
+Window::Window(int width, int height, const char* title) : m_init(-1)
 {
 	m_width = width;
 	m_height = height;
@@ -36,29 +36,37 @@ int Window::Init()
 		return -1;
 	}
 
-	return 0;
+	m_init = 0;
+	return m_init;
 }
 
 int Window::BuildWindow()
 {
-	glfwWindowHint(GLFW_SAMPLES, 4);								// Antialiasing 4
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);					// OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);			// mac os  compability
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	// only new open gl
+	if (m_init == 0) 
+	{
+		glfwWindowHint(GLFW_SAMPLES, 4);								// Antialiasing 4
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);					// OpenGL 3.3
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);			// mac os  compability
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	// only new open gl
 
-	m_pWindow = glfwCreateWindow(m_width, m_height, m_pTitle, NULL, NULL);
-	if (m_pWindow == NULL) {
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
+		m_pWindow = glfwCreateWindow(m_width, m_height, m_pTitle, NULL, NULL);
+		if (m_pWindow == NULL) {
+			std::cout << "Failed to create GLFW window" << std::endl;
+			glfwTerminate();
+			return -1;
+		}
+
+		glfwMakeContextCurrent(m_pWindow);
+
+		SetCallbacks();
+		return 0;
+	}
+	else 
+	{
+		std::cout << "Cannot BuildWindow without Initialize" << std::endl;
 		return -1;
 	}
-
-	glfwMakeContextCurrent(m_pWindow);
-
-	SetCallbacks();
-
-	return 0;
 }
 
 void Window::SetCallbacks()
@@ -67,14 +75,20 @@ void Window::SetCallbacks()
 	glfwSetKeyCallback(m_pWindow, process_input_callback);
 }
 
-void Window::RenderLoop(GLuint programId, GLuint programId2, GLuint VAO1, GLuint VAO2, GLuint VAO3, GLuint VAO4, GLuint VAO5)
+void Window::RenderLoop(GLuint programId, GLuint programId2, GLuint programId3, GLuint VAO1, GLuint VAO2, GLuint VAO3, GLuint VAO4, GLuint VAO5)
 {
 	while (!glfwWindowShouldClose(m_pWindow)) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Use our shader program before to render
-		glUseProgram(!g_isClicked ? programId : programId2);
+		glUseProgram(!g_isClicked ? programId : programId3);
+		if (g_isClicked) {
+			float timeValue = glfwGetTime();
+			float greenValue = sin(timeValue) / 2.0f + 0.5f;
+			int vertexColorLocation = glGetUniformLocation(programId3, "ourColor");
+			glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		}
 
 		// Draw the object
 		if (g_type == TRIANGLE) {

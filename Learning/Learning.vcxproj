@@ -19,6 +19,7 @@
     <None Include="Shaders\FragmentShader.glsl" />
     <None Include="Shaders\FragmentShader2.glsl" />
     <None Include="Shaders\FragmentShaderA.glsl" />
+    <None Include="Shaders\FragmentShaderUniform.glsl" />
     <None Include="Shaders\VertexShader.glsl" />
     <None Include="Shaders\VertexShaderA.glsl" />
   </ItemGroup>

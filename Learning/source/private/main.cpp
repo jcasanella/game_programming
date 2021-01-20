@@ -20,6 +20,7 @@ const char* VERTEX_SHADER_ERROR = "ERROR::SHADER::VERTEX::COMPILATION_FAILED";
 const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
 const char* FRAGMENT_SHADER_A_LOCATION = "Shaders\\FragmentShaderA.glsl";
 const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
+const char* FRAGMENT_SHADER_UNIFORM_LOCATION = "Shaders\\FragmentShaderUniform.glsl";
 const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -76,10 +77,17 @@ int main() {
 	vector<tuple<const char*, const char*, GLuint>> shadersVector2 = { vertex2, fragment2 };
 	GLuint programId2 = buildShaderAndProgram(shadersVector2);
 
-	pWindow->RenderLoop(programId, programId2, VAO1, VAO2, VAO3, VAO4, VAO5);
+	auto vertex3 = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
+	auto fragment3 = make_tuple(FRAGMENT_SHADER_UNIFORM_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
+	vector<tuple<const char*, const char*, GLuint>> shadersVector3 = { vertex3, fragment3 };
+	GLuint programId3 = buildShaderAndProgram(shadersVector3);
+
+
+	pWindow->RenderLoop(programId, programId2, programId3, VAO1, VAO2, VAO3, VAO4, VAO5);
 
 	glDeleteProgram(programId);
 	glDeleteProgram(programId2);
+	glDeleteProgram(programId3);
 
 	delete pWindow;
 	return 0;
