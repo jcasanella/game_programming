@@ -4,7 +4,9 @@
 
 enum DrawType { TRIANGLE, RECTANGLE, DOUBLE_TRIANGLE, MULTIPLE_VAO };
 DrawType g_type = TRIANGLE;
-bool g_isClicked = false;
+//bool g_isClicked = false;
+int g_index = 0;
+int g_totalSize = 0;
 
 // Define callbacks
 void framebuffer_size_callback(GLFWwindow*, int width, int height);
@@ -75,18 +77,20 @@ void Window::SetCallbacks()
 	glfwSetKeyCallback(m_pWindow, process_input_callback);
 }
 
-void Window::RenderLoop(GLuint programId, GLuint programId2, GLuint programId3, GLuint VAO1, GLuint VAO2, GLuint VAO3, GLuint VAO4, GLuint VAO5)
+void Window::RenderLoop(const std::vector<GLuint>& programIds, GLuint VAO1, GLuint VAO2, GLuint VAO3, GLuint VAO4, GLuint VAO5)
 {
+	g_totalSize = programIds.size();
+
 	while (!glfwWindowShouldClose(m_pWindow)) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Use our shader program before to render
-		glUseProgram(!g_isClicked ? programId : programId3);
-		if (g_isClicked) {
+		glUseProgram(programIds[g_index]);
+		if (g_index == g_totalSize - 1) {
 			float timeValue = glfwGetTime();
 			float greenValue = sin(timeValue) / 2.0f + 0.5f;
-			int vertexColorLocation = glGetUniformLocation(programId3, "ourColor");
+			int vertexColorLocation = glGetUniformLocation(programIds[g_index], "ourColor");
 			glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		}
 
@@ -143,8 +147,10 @@ void process_input_callback(GLFWwindow* window, int key, int scancode, int actio
 	}
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-		g_isClicked = !g_isClicked;
-		std::cout << "Space pressed, changing color" << std::endl;
+		//g_isClicked = !g_isClicked;
+		//++g_index;
+		g_index = ++g_index % g_totalSize;
+		std::cout << "Space pressed, changing color " << g_index <<  std::endl;
 	}
 
 	if (key == GLFW_KEY_A && action == GLFW_PRESS) {

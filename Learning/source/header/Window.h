@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <vector>
+
 class Window 
 {
 public:
@@ -10,7 +12,7 @@ public:
 	int BuildWindow();
 	void Terminate();
 
-	void RenderLoop(GLuint programId, GLuint programId2, GLuint programId3, GLuint VAO1, GLuint VAO2, GLuint VAO3, GLuint VAO4, GLuint VAO5);
+	void RenderLoop(const std::vector<GLuint>& programIds, GLuint VAO1, GLuint VAO2, GLuint VAO3, GLuint VAO4, GLuint VAO5);
 
 	inline GLFWwindow* GetWindow() const { return m_pWindow;  }
 

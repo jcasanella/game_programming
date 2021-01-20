@@ -82,12 +82,11 @@ int main() {
 	vector<tuple<const char*, const char*, GLuint>> shadersVector3 = { vertex3, fragment3 };
 	GLuint programId3 = buildShaderAndProgram(shadersVector3);
 
+	const vector<GLuint> programIds = { programId, programId2, programId3 };
+	pWindow->RenderLoop(programIds, VAO1, VAO2, VAO3, VAO4, VAO5);
 
-	pWindow->RenderLoop(programId, programId2, programId3, VAO1, VAO2, VAO3, VAO4, VAO5);
-
-	glDeleteProgram(programId);
-	glDeleteProgram(programId2);
-	glDeleteProgram(programId3);
+	for(vector<GLuint>::const_iterator iter = programIds.begin(); iter != programIds.end(); ++iter)
+		glDeleteProgram(*iter);
 
 	delete pWindow;
 	return 0;
