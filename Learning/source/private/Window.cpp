@@ -2,22 +2,28 @@
 
 #include <iostream>
 
-enum DrawType { TRIANGLE, RECTANGLE, DOUBLE_TRIANGLE, MULTIPLE_VAO };
+enum DrawType { 
+	TRIANGLE, 
+	RECTANGLE, 
+	DOUBLE_TRIANGLE, 
+	MULTIPLE_VAO,
+
+	SIZE_DRAW_TYPE
+};
 DrawType g_type = TRIANGLE;
-//bool g_isClicked = false;
-int g_index = 0;
+
+int g_indexProgram = 0;
 int g_totalSize = 0;
+
+int g_indexVAO = 0;
 
 // Define callbacks
 void framebuffer_size_callback(GLFWwindow*, int width, int height);
 void process_input_callback(GLFWwindow*, int key, int scancode, int action, int mods);
 
 // Class starts here
-Window::Window(int width, int height, const char* title) : m_init(-1)
+Window::Window(int width, int height, const char* title) : m_init(-1), m_width(width), m_height(height), m_pTitle(title)
 {
-	m_width = width;
-	m_height = height;
-	m_pTitle = title;
 	m_pWindow = NULL;
 }
 
@@ -49,8 +55,8 @@ int Window::BuildWindow()
 		glfwWindowHint(GLFW_SAMPLES, 4);								// Antialiasing 4
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);					// OpenGL 3.3
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);			// mac os  compability
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	// only new open gl
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);			// macOS  compability
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	// only new OpenGL
 
 		m_pWindow = glfwCreateWindow(m_width, m_height, m_pTitle, NULL, NULL);
 		if (m_pWindow == NULL) {
@@ -77,7 +83,7 @@ void Window::SetCallbacks()
 	glfwSetKeyCallback(m_pWindow, process_input_callback);
 }
 
-void Window::RenderLoop(const std::vector<GLuint>& programIds, GLuint VAO1, GLuint VAO2, GLuint VAO3, GLuint VAO4, GLuint VAO5)
+void Window::RenderLoop(const std::vector<GLuint>& programIds, const std::vector<GLuint>& vaoIds)
 {
 	g_totalSize = programIds.size();
 
@@ -86,27 +92,19 @@ void Window::RenderLoop(const std::vector<GLuint>& programIds, GLuint VAO1, GLui
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Use our shader program before to render
-		glUseProgram(programIds[g_index]);
-		if (g_index == g_totalSize - 1) {
+		glUseProgram(programIds[g_indexProgram]);
+		if (g_indexProgram == g_totalSize - 1) {
 			float timeValue = glfwGetTime();
 			float greenValue = sin(timeValue) / 2.0f + 0.5f;
-			int vertexColorLocation = glGetUniformLocation(programIds[g_index], "ourColor");
+			int vertexColorLocation = glGetUniformLocation(programIds[g_indexProgram], "ourColor");
 			glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		}
 
-		// Draw the object
-		if (g_type == TRIANGLE) {
-			Draw(VAO1);
-		}
-		else if (g_type == RECTANGLE) {
-			Draw(VAO2);
-		}
-		else if (g_type == DOUBLE_TRIANGLE) {
-			Draw(VAO3);
-		}
-		else {
-			Draw(VAO4);
-			Draw(VAO5);
+		// Draw the Object
+		Draw(vaoIds[g_indexVAO]);
+		if (g_type == MULTIPLE_VAO)
+		{
+			Draw(vaoIds[g_indexVAO + 1]);
 		}
 
 		glfwSwapBuffers(m_pWindow);
@@ -147,29 +145,14 @@ void process_input_callback(GLFWwindow* window, int key, int scancode, int actio
 	}
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-		//g_isClicked = !g_isClicked;
-		//++g_index;
-		g_index = ++g_index % g_totalSize;
-		std::cout << "Space pressed, changing color " << g_index <<  std::endl;
+		g_indexProgram = ++g_indexProgram % g_totalSize;
+		std::cout << "Space pressed, changing color " << g_indexProgram <<  std::endl;
 	}
 
 	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-		if (g_type == TRIANGLE) {
-			g_type = DOUBLE_TRIANGLE;
-			std::cout << "A pressed, drawing a Double Triangle" << std::endl;
-		}
-		else if (g_type == DOUBLE_TRIANGLE) {
-			g_type = RECTANGLE;
-			std::cout << "A pressed, drawing a Rectangle" << std::endl;
-		}
-		else if (g_type == RECTANGLE) {
-			g_type = MULTIPLE_VAO;
-			std::cout << "A pressed, drawing a Double Triangle with multiples VAO" << std::endl;
-		}
-		else {
-			g_type = TRIANGLE;
-			std::cout << "A pressed, drawing a Triangle" << std::endl;
-		}
+		g_type = static_cast<DrawType>((static_cast<int>(g_type) + 1) % static_cast<int>(DrawType::SIZE_DRAW_TYPE));
+		g_indexVAO = static_cast<int>(g_type);
+		std::cout << "A pressed, changing image " << g_type << std::endl;
 	}
 }
 

@@ -83,7 +83,8 @@ int main() {
 	GLuint programId3 = buildShaderAndProgram(shadersVector3);
 
 	const vector<GLuint> programIds = { programId, programId2, programId3 };
-	pWindow->RenderLoop(programIds, VAO1, VAO2, VAO3, VAO4, VAO5);
+	const vector<GLuint> vaos = { VAO1, VAO2, VAO3, VAO4, VAO5 };
+	pWindow->RenderLoop(programIds, vaos);
 
 	for(vector<GLuint>::const_iterator iter = programIds.begin(); iter != programIds.end(); ++iter)
 		glDeleteProgram(*iter);

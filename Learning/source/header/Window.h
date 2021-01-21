@@ -12,7 +12,7 @@ public:
 	int BuildWindow();
 	void Terminate();
 
-	void RenderLoop(const std::vector<GLuint>& programIds, GLuint VAO1, GLuint VAO2, GLuint VAO3, GLuint VAO4, GLuint VAO5);
+	void RenderLoop(const std::vector<GLuint>& programIds, const std::vector<GLuint>& vaos);
 
 	inline GLFWwindow* GetWindow() const { return m_pWindow;  }
 
