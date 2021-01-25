@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="source\private\glad.c" />
     <ClCompile Include="source\private\main.cpp" />
+    <ClCompile Include="source\private\Shader.cpp" />
     <ClCompile Include="source\private\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +25,7 @@
     <None Include="Shaders\VertexShaderA.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\header\Shader.h" />
     <ClInclude Include="source\header\Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
