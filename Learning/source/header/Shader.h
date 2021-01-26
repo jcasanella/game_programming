@@ -1,25 +1,27 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <vector>
 
+namespace GameEngine {
 
-class Shader {
-public:
+	class Shader {
+	public:
+		Shader();
+		~Shader();
 
-	enum ShaderType {
-		VERTEX_SHADER,
-		FRAGMENT_SHADER
+		GLuint CompileVertexShader(const char* shaderLocation) const;
+		GLuint CompileFragmentShader(const char* shaderLocation) const;
+		GLuint CompileShaderProgram() const;
+
+	private:
+		const char* ReadFile(const char*) const;
+		GLuint CompileShader(const char* shaderLocation, const char* message, const GLenum& shaderType) const;
+
+	private:
+		std::vector<GLuint> m_shadersId;
+		std::vector<GLuint> shaderVector2;
 	};
 
-	Shader(const char* shaderLocation, const ShaderType& shaderType);
-	~Shader();
+}
 
-	GLuint CompileShader() const;
-
-private:
-	const char* ReadFile(const char*);
-
-private:
-	const char* VERTEX_SHADER_ERROR = "ERROR::SHADER::VERTEX::COMPILATION_FAILED";
-	const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
-};

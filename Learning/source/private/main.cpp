@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <fstream>
+//#include <fstream>
 #include <filesystem>
 #include <vector>
 #include <tuple>
@@ -23,16 +23,16 @@ const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_UNIFORM_LOCATION = "Shaders\\FragmentShaderUniform.glsl";
 const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+//void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+//void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 GLuint prepareRectangle();
 GLuint prepareTriangle();
 GLuint prepareDoubleTriangle();
 GLuint prepareTriangle1();
 GLuint prepareTriangle2();
-const char* readFile(const char*);
-GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
-GLuint compileShaderProgram(const vector<GLuint>& shadersVector);
+//const char* readFile(const char*);
+//GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
+//GLuint compileShaderProgram(const vector<GLuint>& shadersVector);
 GLuint buildShaderAndProgram(const vector<tuple<const char*, const char*, GLuint>>& shaders);
 
 int main() {
@@ -93,6 +93,7 @@ int main() {
 	return 0;
 }
 
+/*
 const char* readFile(const char* fileName)
 {
 	char* content = NULL;
@@ -110,6 +111,7 @@ const char* readFile(const char* fileName)
 
 	return content;
 }
+*/
 
 GLuint prepareRectangle()
 {
@@ -333,6 +335,7 @@ GLuint prepareTriangle2()
 	return VAO;
 }
 
+/*
 GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType) 
 {
 	const char* shaderSource = readFile(shaderLocation);
@@ -356,8 +359,9 @@ GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuin
 	delete[] shaderSource;
 
 	return shaderId;
-}
+}*/
 
+/*
 GLuint compileShaderProgram(const vector<GLuint>& shadersVector)
 {
 	// Link the different shaders
@@ -386,6 +390,7 @@ GLuint compileShaderProgram(const vector<GLuint>& shadersVector)
 
 	return shaderProgram;
 }
+*/
 
 GLuint buildShaderAndProgram(const vector<tuple<const char*, const char*, GLuint>>& shaders)
 {
