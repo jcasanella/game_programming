@@ -6,17 +6,32 @@
 
 namespace GameEngine {
 
-	Shader::Shader()
+	const GLuint INVALID_PROGRAM_ID = 0;
+
+	Shader::Shader() : m_programId(INVALID_PROGRAM_ID)
 	{
 	}
 
-	GLuint Shader::CompileVertexShader(const char* shaderLocation) const
+	Shader::~Shader()
+	{
+		Terminate();
+	}
+
+	void Shader::Terminate()
+	{
+		if (m_programId != INVALID_PROGRAM_ID)
+		{
+			glDeleteProgram(m_programId);
+		}
+	}
+
+	GLuint Shader::CompileVertexShader(const char* shaderLocation)
 	{
 		const char* VERTEX_SHADER_ERROR = "ERROR::SHADER::VERTEX::COMPILATION_FAILED";
 		return CompileShader(shaderLocation, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
 	}
 
-	GLuint Shader::CompileFragmentShader(const char* shaderLocation) const
+	GLuint Shader::CompileFragmentShader(const char* shaderLocation)
 	{
 		const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
 		return CompileShader(shaderLocation, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
@@ -51,7 +66,7 @@ namespace GameEngine {
 		return shaderProgram;
 	}
 
-	GLuint Shader::CompileShader(const char* shaderLocation, const char* errorMessage, const GLenum& shaderType) const
+	GLuint Shader::CompileShader(const char* shaderLocation, const char* errorMessage, const GLenum& shaderType)
 	{
 		const char* shaderSource = ReadFile(shaderLocation);
 		assert(shaderSource != NULL);
@@ -73,15 +88,12 @@ namespace GameEngine {
 
 		delete[] shaderSource;
 
-		std::vector<GLuint> shaderVector;
-		shaderVector.push_back(shaderId);
-	//	this->shaderVector2.push_back(shaderId);
-
+		m_shadersId.push_back(shaderId);
 
 		return shaderId;
 	}
 
-	const char* Shader::ReadFile(const char* fileName) const
+	const char* Shader::ReadFile(const char* fileName)
 	{
 		char* content = NULL;
 		std::ifstream inData(fileName);

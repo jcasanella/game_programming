@@ -10,17 +10,18 @@ namespace GameEngine {
 		Shader();
 		~Shader();
 
-		GLuint CompileVertexShader(const char* shaderLocation) const;
-		GLuint CompileFragmentShader(const char* shaderLocation) const;
+		GLuint CompileVertexShader(const char* shaderLocation);
+		GLuint CompileFragmentShader(const char* shaderLocation);
 		GLuint CompileShaderProgram() const;
+		void Terminate();
 
 	private:
-		const char* ReadFile(const char*) const;
-		GLuint CompileShader(const char* shaderLocation, const char* message, const GLenum& shaderType) const;
+		const char* ReadFile(const char*);
+		GLuint CompileShader(const char* shaderLocation, const char* message, const GLenum& shaderType);
 
 	private:
 		std::vector<GLuint> m_shadersId;
-		std::vector<GLuint> shaderVector2;
+		GLuint m_programId;
 	};
 
 }

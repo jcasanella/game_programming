@@ -2,38 +2,30 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-//#include <fstream>
 #include <filesystem>
 #include <vector>
-#include <tuple>
 
 #include "Window.h"
+#include "Shader.h"
 
 #include <cassert>
 
 using namespace std;
+using namespace GameEngine;
 
 const char* VERTEX_SHADER_LOCATION = "Shaders\\VertexShader.glsl";
 const char* VERTEX_SHADER_A_LOCATION = "Shaders\\VertexShaderA.glsl";
-const char* VERTEX_SHADER_ERROR = "ERROR::SHADER::VERTEX::COMPILATION_FAILED";
 
 const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
 const char* FRAGMENT_SHADER_A_LOCATION = "Shaders\\FragmentShaderA.glsl";
 const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_UNIFORM_LOCATION = "Shaders\\FragmentShaderUniform.glsl";
-const char* FRAGMENT_SHADER_ERROR = "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED";
 
-//void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-//void process_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 GLuint prepareRectangle();
 GLuint prepareTriangle();
 GLuint prepareDoubleTriangle();
 GLuint prepareTriangle1();
 GLuint prepareTriangle2();
-//const char* readFile(const char*);
-//GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType);
-//GLuint compileShaderProgram(const vector<GLuint>& shadersVector);
-GLuint buildShaderAndProgram(const vector<tuple<const char*, const char*, GLuint>>& shaders);
 
 int main() {
 	const int WIDTH = 800;
@@ -65,53 +57,33 @@ int main() {
 	GLuint VAO4 = prepareTriangle1();
 	GLuint VAO5 = prepareTriangle2();
 
-	// First Shader program
-	auto vertex = make_tuple(VERTEX_SHADER_A_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
-	auto fragment = make_tuple(FRAGMENT_SHADER_A_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
-	vector<tuple<const char*, const char*, GLuint>> shadersVector = { vertex, fragment };
-	GLuint programId = buildShaderAndProgram(shadersVector);
+	Shader* pShader = new Shader();
+	pShader->CompileVertexShader(VERTEX_SHADER_A_LOCATION);
+	pShader->CompileFragmentShader(FRAGMENT_SHADER_A_LOCATION);
+	GLuint programId = pShader->CompileShaderProgram();
 
-	// Second Shader program
-	auto vertex2 = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
-	auto fragment2 = make_tuple(FRAGMENT_SHADER2_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
-	vector<tuple<const char*, const char*, GLuint>> shadersVector2 = { vertex2, fragment2 };
-	GLuint programId2 = buildShaderAndProgram(shadersVector2);
+	Shader* pShader2 = new Shader();
+	pShader2->CompileVertexShader(VERTEX_SHADER_LOCATION);
+	pShader2->CompileFragmentShader(FRAGMENT_SHADER2_LOCATION);
+	GLuint programId2 = pShader2->CompileShaderProgram();
 
-	auto vertex3 = make_tuple(VERTEX_SHADER_LOCATION, VERTEX_SHADER_ERROR, GL_VERTEX_SHADER);
-	auto fragment3 = make_tuple(FRAGMENT_SHADER_UNIFORM_LOCATION, FRAGMENT_SHADER_ERROR, GL_FRAGMENT_SHADER);
-	vector<tuple<const char*, const char*, GLuint>> shadersVector3 = { vertex3, fragment3 };
-	GLuint programId3 = buildShaderAndProgram(shadersVector3);
+	Shader* pShader3 = new Shader();
+	pShader3->CompileVertexShader(VERTEX_SHADER_LOCATION);
+	pShader3->CompileFragmentShader(FRAGMENT_SHADER_UNIFORM_LOCATION);
+	GLuint programId3 = pShader3->CompileShaderProgram();
 
 	const vector<GLuint> programIds = { programId, programId2, programId3 };
 	const vector<GLuint> vaos = { VAO1, VAO2, VAO3, VAO4, VAO5 };
 	pWindow->RenderLoop(programIds, vaos);
 
-	for(vector<GLuint>::const_iterator iter = programIds.begin(); iter != programIds.end(); ++iter)
-		glDeleteProgram(*iter);
+	// NOTE: Deleting the Object Shader will delete the program either
+	delete pShader;
+	delete pShader2;
+	delete pShader3;
 
 	delete pWindow;
 	return 0;
 }
-
-/*
-const char* readFile(const char* fileName)
-{
-	char* content = NULL;
-	ifstream inData(fileName);
-	if (inData.is_open()) {
-		inData.seekg(0, ios::end);
-		size_t fileSize = inData.tellg();
-		inData.seekg(0);
-		content = new char[fileSize + 1];
-		inData.read(content, fileSize);
-		content[fileSize] = '\0';
-	}
-
-	inData.close();
-
-	return content;
-}
-*/
 
 GLuint prepareRectangle()
 {
@@ -333,74 +305,4 @@ GLuint prepareTriangle2()
 	glBindVertexArray(0);	// unbind VAO
 
 	return VAO;
-}
-
-/*
-GLuint compileShader(const char* shaderLocation, const char* errorMessage, GLuint shaderType) 
-{
-	const char* shaderSource = readFile(shaderLocation);
-	assert(shaderSource != NULL);
-
-	GLuint shaderId = glCreateShader(shaderType);
-	assert(shaderId != 0);
-
-	glShaderSource(shaderId, 1, &shaderSource, NULL);
-	glCompileShader(shaderId);
-
-	// Check if vertex shader compilation worked
-	GLint success;
-	char infoLog[512];
-	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
-		cout << errorMessage << endl << infoLog << endl;
-	}
-
-	delete[] shaderSource;
-
-	return shaderId;
-}*/
-
-/*
-GLuint compileShaderProgram(const vector<GLuint>& shadersVector)
-{
-	// Link the different shaders
-	GLuint shaderProgram = glCreateProgram();
-	assert(shaderProgram != 0);
-
-	GLint success;
-	char infoLog[512];
-
-	for (vector<GLuint>::const_iterator it = shadersVector.begin(); it != shadersVector.end(); ++it) {
-		glAttachShader(shaderProgram, *it);
-	}
-
-
-	glLinkProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		cout << "ERROR::SHADERPROGRAM::LINK_FAILED" << endl << infoLog << endl;
-	}
-
-	for (vector<GLuint>::const_iterator it = shadersVector.begin(); it != shadersVector.end(); ++it) {
-		glDetachShader(shaderProgram, *it);
-		glDeleteShader(*it);
-	}
-
-	return shaderProgram;
-}
-*/
-
-GLuint buildShaderAndProgram(const vector<tuple<const char*, const char*, GLuint>>& shaders)
-{
-	vector<GLuint> shaderVector;
-	for (std::vector<tuple<const char*, const char*, GLuint>>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
-		GLuint shaderId = compileShader(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it));
-		shaderVector.push_back(shaderId);
-	}
-
-	GLuint shaderProgram = compileShaderProgram(shaderVector);
-
-	return shaderProgram;
 }
