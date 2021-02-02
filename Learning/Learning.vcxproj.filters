@@ -32,6 +32,9 @@
     <ClCompile Include="source\private\Shader.cpp">
       <Filter>Source\Source</Filter>
     </ClCompile>
+    <ClCompile Include="source\private\Figure.cpp">
+      <Filter>Source\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\VertexShader.glsl">
@@ -58,6 +61,9 @@
       <Filter>Source\Header</Filter>
     </ClInclude>
     <ClInclude Include="source\header\Shader.h">
+      <Filter>Source\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\header\Figure.h">
       <Filter>Source\Header</Filter>
     </ClInclude>
   </ItemGroup>

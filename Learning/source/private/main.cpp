@@ -7,6 +7,7 @@
 
 #include "Window.h"
 #include "Shader.h"
+#include "Figure.h"
 
 #include <cassert>
 
@@ -22,7 +23,7 @@ const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_UNIFORM_LOCATION = "Shaders\\FragmentShaderUniform.glsl";
 
 GLuint prepareRectangle();
-GLuint prepareTriangle();
+//GLuint prepareTriangle();
 GLuint prepareDoubleTriangle();
 GLuint prepareTriangle1();
 GLuint prepareTriangle2();
@@ -50,7 +51,17 @@ int main() {
 	// objects you want to draw, you first generate / configure all the VAOs(and thus the required VBO and
 	// attribute pointers) and store those for later use.The moment we want to draw one of our objects, we
 	// take the corresponding VAO, bind it, then draw the object and unbind the VAO again.
-	GLuint VAO1 = prepareTriangle();
+
+	const GLfloat vertex_buffer_data[] = {
+	-1.0f, -1.0f, 0.0f,
+	1.0f, -1.0f, 0.0f,
+	0.0f,  1.0f, 0.0f,
+	};
+	Figure* pTriangle1 = new Figure(&vertex_buffer_data[0], nullptr);
+	GLuint VAO1 = pTriangle1->Build();
+	delete pTriangle1;
+
+//	GLuint VAO1 = prepareTriangle();
 	GLuint VAO2 = prepareRectangle();
 	GLuint VAO3 = prepareDoubleTriangle();
 
@@ -139,6 +150,7 @@ GLuint prepareRectangle()
 	return VAO;
 }
 
+/*
 GLuint prepareTriangle() 
 {
 	// A Vertex Array Object (VAO) is an object which contains one or more Vertex Buffer Objects and is designed to store the information 
@@ -178,7 +190,7 @@ GLuint prepareTriangle()
 	glBindVertexArray(0);	// unbind VAO
 
 	return VAO;
-}
+}*/
 
 GLuint prepareDoubleTriangle()
 {

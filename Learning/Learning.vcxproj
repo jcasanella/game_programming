@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\private\Figure.cpp" />
     <ClCompile Include="source\private\glad.c" />
     <ClCompile Include="source\private\main.cpp" />
     <ClCompile Include="source\private\Shader.cpp" />
@@ -25,6 +26,7 @@
     <None Include="Shaders\VertexShaderA.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\header\Figure.h" />
     <ClInclude Include="source\header\Shader.h" />
     <ClInclude Include="source\header\Window.h" />
   </ItemGroup>
