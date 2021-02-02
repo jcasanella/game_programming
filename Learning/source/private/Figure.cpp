@@ -2,7 +2,7 @@
 
 namespace GameEngine {
 
-	Figure::Figure(const GLfloat* data = nullptr, const GLuint* indexes = nullptr) : m_data(data), m_index(indexes)
+	Figure::Figure(const GLfloat* data, ULLong sizeData, const GLuint* indexes, ULLong sizeIndexes) : m_data(data), m_index(indexes), m_dataSize(sizeData), m_indexesSize(sizeIndexes)
 	{
 
 	}
@@ -25,7 +25,7 @@ namespace GameEngine {
 
 		// Copy our vertices array into a buffer to be used by OpenGL
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(m_data), m_data, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_dataSize, m_data, GL_STATIC_DRAW);		// note: work around sizeof(m_data)
 
 		// Set the vertex attribute pointers
 		glVertexAttribPointer(
