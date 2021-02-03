@@ -22,8 +22,8 @@ const char* FRAGMENT_SHADER_A_LOCATION = "Shaders\\FragmentShaderA.glsl";
 const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_UNIFORM_LOCATION = "Shaders\\FragmentShaderUniform.glsl";
 
-GLuint prepareImage(const GLfloat*, ULLong);
-GLuint prepareRectangle();
+GLuint prepareImage(const GLfloat* data, ULLong sizeData, const GLuint* indexes=nullptr, ULLong sizeIndexes = 0);
+//GLuint prepareRectangle();
 
 int main() {
 	const int WIDTH = 800;
@@ -56,7 +56,18 @@ int main() {
 	};
 	GLuint VAO1 = prepareImage(&vertex_buffer_data[0], sizeof(vertex_buffer_data));
 
-	GLuint VAO2 = prepareRectangle();
+	const GLfloat vertex_buffer_data2[] = {
+		0.5f, 0.5f, 0.0f,	// Top Right
+		0.5f, -0.5f, 0.0f,	// Bottom Right
+		-0.5f, -0.5f, 0.0f,	// Bottom Left
+		-0.5f, 0.5f, 0.0f	// Top Left
+	};
+
+	const GLuint indexes_data[] = {
+		0, 1, 3,	// First triangle
+		1, 2, 3		// Second triangle
+	};
+	GLuint VAO2 = prepareImage(&vertex_buffer_data2[0], sizeof(vertex_buffer_data), &indexes_data[0], sizeof(indexes_data));
 
 	const GLfloat vertex_buffer_data3[] = {
 		-1.0f, -1.0f, 0.0f,	// Left Bottom Triangle1
@@ -111,15 +122,16 @@ int main() {
 	return 0;
 }
 
-GLuint prepareImage(const GLfloat* vertex_buffer_data, ULLong sizeData)
+GLuint prepareImage(const GLfloat* vertex_data, ULLong sizeData, const GLuint* index_data, ULLong sizeIndex)
 {
-	Figure* pTriangle = new Figure(vertex_buffer_data, sizeData);
+	Figure* pTriangle = new Figure(vertex_data, sizeData, index_data, sizeIndex);
 	GLuint VAO = pTriangle->Build();
 	delete pTriangle;
 
 	return VAO;
 }
 
+/*
 GLuint prepareRectangle()
 {
 	const GLfloat vertex_buffer_data[] = {
@@ -173,3 +185,4 @@ GLuint prepareRectangle()
 
 	return VAO;
 }
+*/

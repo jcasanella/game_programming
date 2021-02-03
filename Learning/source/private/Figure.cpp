@@ -27,6 +27,14 @@ namespace GameEngine {
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, m_dataSize, m_data, GL_STATIC_DRAW);		// note: work around sizeof(m_data)
 
+		if (!m_index) {
+			GLuint EBO;
+			glGenBuffers(1, &EBO);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexesSize, m_index, GL_STATIC_DRAW);
+		}
+
 		// Set the vertex attribute pointers
 		glVertexAttribPointer(
 			0,                  // same as location in the vertex shader location
