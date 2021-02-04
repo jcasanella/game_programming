@@ -27,7 +27,7 @@ namespace GameEngine {
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, m_dataSize, m_data, GL_STATIC_DRAW);		// note: work around sizeof(m_data)
 
-		if (!m_index) {
+		if (m_index) {
 			GLuint EBO;
 			glGenBuffers(1, &EBO);
 
