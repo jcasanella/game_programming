@@ -16,11 +16,19 @@ using namespace GameEngine;
 
 const char* VERTEX_SHADER_LOCATION = "Shaders\\VertexShader.glsl";
 const char* VERTEX_SHADER_A_LOCATION = "Shaders\\VertexShaderA.glsl";
+const char* VERTEX_SHADER_COLOR = "Shaders\\VertexShader3.glsl";
 
 const char* FRAGMENT_SHADER_LOCATION = "Shaders\\FragmentShader.glsl";
 const char* FRAGMENT_SHADER_A_LOCATION = "Shaders\\FragmentShaderA.glsl";
 const char* FRAGMENT_SHADER2_LOCATION = "Shaders\\FragmentShader2.glsl";
 const char* FRAGMENT_SHADER_UNIFORM_LOCATION = "Shaders\\FragmentShaderUniform.glsl";
+const char* FRAGMENT_SHADER_COLOR = "Shaders\\FragmentShader3.glsl";
+
+string test[3][2] = {
+	{ VERTEX_SHADER_A_LOCATION, VERTEX_SHADER_A_LOCATION },
+	{ VERTEX_SHADER_LOCATION, FRAGMENT_SHADER2_LOCATION },
+	{ VERTEX_SHADER_LOCATION, FRAGMENT_SHADER_UNIFORM_LOCATION }
+}; 
 
 GLuint prepareImage(const GLfloat* data, ULLong sizeData, const GLuint* indexes=nullptr, ULLong sizeIndexes = 0);
 
@@ -93,6 +101,14 @@ int main() {
 	};
 	GLuint VAO5 = prepareImage(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5));
 
+	const GLfloat vertex_buffer_with_colors[] = {
+		0.5f, -0.5f, 0.0f,	1.0f, 0.0f, 0.0f,		// bottom right and color red
+		-0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,	// bottom left and color green
+		0.0f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f		// top and color blue
+	};
+
+	//const char
+
 	Shader* pShader = new Shader();
 	pShader->CompileVertexShader(VERTEX_SHADER_A_LOCATION);
 	pShader->CompileFragmentShader(FRAGMENT_SHADER_A_LOCATION);
@@ -107,6 +123,8 @@ int main() {
 	pShader3->CompileVertexShader(VERTEX_SHADER_LOCATION);
 	pShader3->CompileFragmentShader(FRAGMENT_SHADER_UNIFORM_LOCATION);
 	GLuint programId3 = pShader3->CompileShaderProgram();
+
+
 
 	const vector<GLuint> programIds = { programId, programId2, programId3 };
 	const vector<GLuint> vaos = { VAO1, VAO2, VAO3, VAO4, VAO5 };

@@ -55,6 +55,12 @@
     <None Include="Shaders\FragmentShaderUniform.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\FragmentShader3.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\VertexShader3.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\header\Window.h">
