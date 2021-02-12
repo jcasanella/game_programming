@@ -29,7 +29,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\header\Figure.h" />
+    <ClInclude Include="source\header\Resources.h" />
     <ClInclude Include="source\header\Shader.h" />
+    <ClInclude Include="source\header\Vertexs.h" />
     <ClInclude Include="source\header\Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

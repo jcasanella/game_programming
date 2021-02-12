@@ -72,5 +72,11 @@
     <ClInclude Include="source\header\Figure.h">
       <Filter>Source\Header</Filter>
     </ClInclude>
+    <ClInclude Include="source\header\Resources.h">
+      <Filter>Source\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\header\Vertexs.h">
+      <Filter>Source\Header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
