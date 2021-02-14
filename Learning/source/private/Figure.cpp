@@ -2,21 +2,17 @@
 
 namespace GameEngine {
 
-	Figure::Figure(const GLfloat* data, ULLong sizeData, const GLuint* indexes, ULLong sizeIndexes) : m_data(data), m_index(indexes), m_dataSize(sizeData), m_indexesSize(sizeIndexes)
-	{
-
-	}
-
-	GLuint Figure::Build() 
+	Figure BuildFigure(const GLfloat* data, ULLong dataSize, const GLuint* indexes, ULLong indexesSize)
 	{
 		// A Vertex Array Object (VAO) is an object which contains one or more Vertex Buffer Objects and is designed to store the information 
 		// for a complete rendered object. Can contain multiples VBO
 		// Contains the following info:
 		// - Calls to glEnableVertexAttribArray or glDisableVertexAttrib Array
 		// - Vertex attribute configurations via glVertexAttribPointer and objects associated via glVertexAttribPointer
-		GLuint VAO;
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
+		//GLuint VAO;
+		Figure attributes;
+		glGenVertexArrays(1, &attributes.vao);
+		glBindVertexArray(attributes.vao);
 
 		// A Vertex Buffer Object(VBO) is a memory buffer in the GPU designed to hold information about vertices. VBOs can also store information such as normals, 
 		// texcoords, indices, etc.
@@ -25,17 +21,18 @@ namespace GameEngine {
 
 		// Copy our vertices array into a buffer to be used by OpenGL
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, m_dataSize, m_data, GL_STATIC_DRAW);		// note: work around sizeof(m_data)
+		glBufferData(GL_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW);		// note: work around sizeof(m_data)
 
-		if (m_index) {
+		if (indexes) {
 			GLuint EBO;
 			glGenBuffers(1, &EBO);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexesSize, m_index, GL_STATIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexesSize, indexes, GL_STATIC_DRAW);
 		}
 
 		// Set the vertex attribute pointers
+		attributes.vertextAttrPointer.push_back(0);	// same as location in the vertex shader location
 		glVertexAttribPointer(
 			0,                  // same as location in the vertex shader location
 			3,                  // size - it's a vec3 so it contains 3 values
@@ -47,6 +44,6 @@ namespace GameEngine {
 
 		glBindVertexArray(0);	// unbind VAO
 
-		return VAO;
+		return attributes;
 	}
 }

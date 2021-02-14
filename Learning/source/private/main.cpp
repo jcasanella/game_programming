@@ -42,15 +42,15 @@ int main() {
 	// attribute pointers) and store those for later use.The moment we want to draw one of our objects, we
 	// take the corresponding VAO, bind it, then draw the object and unbind the VAO again.
 
-	GLuint VAO1 = prepareImage(&vertex_buffer_data[0], sizeof(vertex_buffer_data));
+	Figure attribs1 = BuildFigure(&vertex_buffer_data[0], sizeof(vertex_buffer_data));
 
-	GLuint VAO2 = prepareImage(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), &indexes_data[0], sizeof(indexes_data));
+	Figure attribs2 = BuildFigure(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), &indexes_data[0], sizeof(indexes_data));
 
-	GLuint VAO3 = prepareImage(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3));	
+	Figure attribs3 = BuildFigure(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3));	
 
-	GLuint VAO4 = prepareImage(&vertex_buffer_data4[0], sizeof(vertex_buffer_data4));
+	Figure attribs4 = BuildFigure(&vertex_buffer_data4[0], sizeof(vertex_buffer_data4));
 
-	GLuint VAO5 = prepareImage(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5));
+	Figure attribs5 = BuildFigure(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5));
 
 	const GLfloat vertex_buffer_with_colors[] = {
 		0.5f, -0.5f, 0.0f,	1.0f, 0.0f, 0.0f,		// bottom right and color red
@@ -68,13 +68,14 @@ int main() {
 		delete pShader;	// 	NOTE: Deleting the Object Shader will delete the program either
 	}
 
-	const vector<GLuint> vaos = { VAO1, VAO2, VAO3, VAO4, VAO5 };
+	const vector<Figure> vaos = { attribs1, attribs2, attribs3, attribs4, attribs5 };
 	pWindow->RenderLoop(programIds, vaos);
 
 	delete pWindow;
 	return 0;
 }
 
+/*
 GLuint prepareImage(const GLfloat* vertex_data, ULLong sizeData, const GLuint* index_data, ULLong sizeIndex)
 {
 	Figure* pTriangle = new Figure(vertex_data, sizeData, index_data, sizeIndex);
@@ -82,4 +83,4 @@ GLuint prepareImage(const GLfloat* vertex_data, ULLong sizeData, const GLuint* i
 	delete pTriangle;
 
 	return VAO;
-}
+}*/

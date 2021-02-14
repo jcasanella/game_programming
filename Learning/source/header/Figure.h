@@ -1,21 +1,16 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <vector>
 
 namespace GameEngine {
 
 	typedef unsigned long long ULLong;
 
-	class Figure {
-	public:
-		Figure(const GLfloat* data, ULLong dataSize, const GLuint* indexes = nullptr, ULLong indexesSize = 0);
+	typedef struct {
+		GLuint vao;
+		std::vector<int> vertextAttrPointer;
+	} Figure;
 
-		GLuint Build();
-
-	private:
-		const GLfloat* m_data;
-		const GLuint* m_index;
-		ULLong m_dataSize;
-		ULLong m_indexesSize;
-	};
+	Figure BuildFigure(const GLfloat* data, ULLong dataSize, const GLuint* indexes = nullptr, ULLong indexesSize = 0);
 }
