@@ -27,10 +27,10 @@ int main() {
 	pWindow->Init();
 	pWindow->BuildWindow();
 
-#if DEBUG
+//#if DEBUG
 	namespace fs = std::filesystem;
 	std::cout << "Current path is " << fs::current_path() << '\n';
-#endif
+//#endif
 
 	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
 		cout << "Failed to init GLAD" << endl;
@@ -41,16 +41,15 @@ int main() {
 	// objects you want to draw, you first generate / configure all the VAOs(and thus the required VBO and
 	// attribute pointers) and store those for later use.The moment we want to draw one of our objects, we
 	// take the corresponding VAO, bind it, then draw the object and unbind the VAO again.
+	Figure attribs1 = BuildFigure(&vertex_buffer_data[0], sizeof(vertex_buffer_data), STRIDE_3);
 
-	Figure attribs1 = BuildFigure(&vertex_buffer_data[0], sizeof(vertex_buffer_data));
+	Figure attribs2 = BuildFigure(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), STRIDE_3, &indexes_data[0], sizeof(indexes_data));
 
-	Figure attribs2 = BuildFigure(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), &indexes_data[0], sizeof(indexes_data));
+	Figure attribs3 = BuildFigure(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3), STRIDE_3);	
 
-	Figure attribs3 = BuildFigure(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3));	
+	Figure attribs4 = BuildFigure(&vertex_buffer_data4[0], sizeof(vertex_buffer_data4), STRIDE_3);
 
-	Figure attribs4 = BuildFigure(&vertex_buffer_data4[0], sizeof(vertex_buffer_data4));
-
-	Figure attribs5 = BuildFigure(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5));
+	Figure attribs5 = BuildFigure(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5), STRIDE_3);
 
 	const GLfloat vertex_buffer_with_colors[] = {
 		0.5f, -0.5f, 0.0f,	1.0f, 0.0f, 0.0f,		// bottom right and color red

@@ -2,7 +2,7 @@
 
 namespace GameEngine {
 
-	Figure BuildFigure(const GLfloat* data, ULLong dataSize, const GLuint* indexes, ULLong indexesSize)
+	Figure BuildFigure(const GLfloat* data, ULLong dataSize, const STRIDE_SIZE& strideSize, const GLuint* indexes, ULLong indexesSize)
 	{
 		// A Vertex Array Object (VAO) is an object which contains one or more Vertex Buffer Objects and is designed to store the information 
 		// for a complete rendered object. Can contain multiples VBO
@@ -38,7 +38,7 @@ namespace GameEngine {
 			3,                  // size - it's a vec3 so it contains 3 values
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
-			3 * sizeof(float),  // stride, where it starts the next vertex
+			strideSize * sizeof(float),  // stride, where it starts the next vertex - valid values 3 and 6
 			(void*)0            // desfase del buffer
 		);
 
