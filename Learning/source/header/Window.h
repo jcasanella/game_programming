@@ -25,7 +25,7 @@ namespace GameEngine {
 
 	private:
 		void SetCallbacks();
-		void Draw(GLuint VAO);
+		void Draw(const Figure& VAO);
 
 	private:
 		GLFWwindow* m_pWindow;

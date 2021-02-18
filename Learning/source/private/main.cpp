@@ -16,7 +16,7 @@
 using namespace std;
 using namespace GameEngine;
 
-GLuint prepareImage(const GLfloat* data, ULLong sizeData, const GLuint* indexes=nullptr, ULLong sizeIndexes = 0);
+//GLuint prepareImage(const GLfloat* data, ULLong sizeData, const GLuint* indexes=nullptr, ULLong sizeIndexes = 0);
 
 int main() {
 	const int WIDTH = 800;
@@ -51,11 +51,13 @@ int main() {
 
 	Figure attribs5 = BuildFigure(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5), STRIDE_3);
 
-	const GLfloat vertex_buffer_with_colors[] = {
+	Figure attribs6 = BuildFigure(&vertex_buffer_with_colors[0], sizeof(vertex_buffer_with_colors), STRIDE_6);
+
+	/*const GLfloat vertex_buffer_with_colors[] = {
 		0.5f, -0.5f, 0.0f,	1.0f, 0.0f, 0.0f,		// bottom right and color red
 		-0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,	// bottom left and color green
 		0.0f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f		// top and color blue
-	};
+	};*/
 
 	vector<GLuint> programIds;
 	for (int idx = 0; idx < NUM_SHADERS; idx++) {

@@ -1,6 +1,7 @@
 #include "Window.h"
 
 #include <iostream>
+#include <vector>
 
 namespace GameEngine {
 
@@ -103,10 +104,10 @@ namespace GameEngine {
 			}
 
 			// Draw the Object
-			Draw(vaoIds[g_indexVAO].vao);
+			Draw(vaoIds[g_indexVAO]);
 			if (g_type == MULTIPLE_VAO)
 			{
-				Draw(vaoIds[g_indexVAO + 1].vao);
+				Draw(vaoIds[g_indexVAO + 1]);
 			}
 
 			glfwSwapBuffers(m_pWindow);
@@ -114,12 +115,13 @@ namespace GameEngine {
 		}
 	}
 
-	void Window::Draw(GLuint VAO)
+	void Window::Draw(const Figure& VAO)
 	{
-		glBindVertexArray(VAO);
-		glEnableVertexAttribArray(0);	// same as location in the vertex shader
-		//glEnableVertexAttribArray(1);	// same as location in the vertex shader
+		glBindVertexArray(VAO.vao);
 
+		for (std::vector<int>::const_iterator it = VAO.vertextAttrPointer.begin(); it != VAO.vertextAttrPointer.end(); ++it) {
+			glEnableVertexAttribArray(*it);	// same as location in the vertex shader
+		}
 
 		if (g_type == TRIANGLE || g_type == MULTIPLE_VAO) {
 			glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -131,8 +133,10 @@ namespace GameEngine {
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		}
 
-		//glDisableVertexAttribArray(1);	// same as location in the vertex shader
-		glDisableVertexAttribArray(0);	// same as location in the vertex shader
+		for (std::vector<int>::const_reverse_iterator it = VAO.vertextAttrPointer.rbegin(); it != VAO.vertextAttrPointer.rend(); ++it) {
+			glDisableVertexAttribArray(*it);
+		}
+
 		glBindVertexArray(0);			// unbinds
 	}
 

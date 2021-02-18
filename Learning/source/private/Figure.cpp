@@ -42,6 +42,13 @@ namespace GameEngine {
 			(void*)0            // desfase del buffer
 		);
 
+		if (strideSize == STRIDE_6) {
+			attributes.vertextAttrPointer.push_back(1);
+			// 1rst argument - location in vertex shader
+			// last argument offset in the buffer
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, strideSize * sizeof(float), (void*)(3 * sizeof(float)));
+		}
+
 		glBindVertexArray(0);	// unbind VAO
 
 		return attributes;

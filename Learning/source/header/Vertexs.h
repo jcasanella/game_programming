@@ -48,4 +48,11 @@ namespace GameEngine {
 		0.0f, 1.0f, 0.0f,	// Left Up Triangle2
 		1.0f, 0.0f, 0.0f,	// Middle Triangle2
 	};
+
+	// Triangle with color
+	const GLfloat vertex_buffer_with_colors[] = {
+	0.5f, -0.5f, 0.0f,	1.0f, 0.0f, 0.0f,		// bottom right and color red
+	-0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,	// bottom left and color green
+	0.0f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f		// top and color blue
+	};
 }
