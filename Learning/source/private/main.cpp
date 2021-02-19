@@ -10,6 +10,8 @@
 #include "Figure.h"
 #include "Vertexs.h"
 #include "Resources.h"
+#include "FigureDraw.h"
+#include "Figure3.h"
 
 #include <cassert>
 
@@ -41,7 +43,7 @@ int main() {
 	// objects you want to draw, you first generate / configure all the VAOs(and thus the required VBO and
 	// attribute pointers) and store those for later use.The moment we want to draw one of our objects, we
 	// take the corresponding VAO, bind it, then draw the object and unbind the VAO again.
-	Figure attribs1 = BuildFigure(&vertex_buffer_data[0], sizeof(vertex_buffer_data), STRIDE_3);
+	/*Figure attribs1 = BuildFigure(&vertex_buffer_data[0], sizeof(vertex_buffer_data), STRIDE_3);
 
 	Figure attribs2 = BuildFigure(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), STRIDE_3, &indexes_data[0], sizeof(indexes_data));
 
@@ -51,7 +53,7 @@ int main() {
 
 	Figure attribs5 = BuildFigure(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5), STRIDE_3);
 
-	Figure attribs6 = BuildFigure(&vertex_buffer_with_colors[0], sizeof(vertex_buffer_with_colors), STRIDE_6);
+	Figure attribs6 = BuildFigure(&vertex_buffer_with_colors[0], sizeof(vertex_buffer_with_colors), STRIDE_6);*/
 
 	/*const GLfloat vertex_buffer_with_colors[] = {
 		0.5f, -0.5f, 0.0f,	1.0f, 0.0f, 0.0f,		// bottom right and color red
@@ -69,9 +71,11 @@ int main() {
 		delete pShader;	// 	NOTE: Deleting the Object Shader will delete the program either
 	}
 
-	const vector<Figure> vaos = { attribs1, attribs2, attribs3, attribs4, attribs5 };
-	pWindow->RenderLoop(programIds, vaos);
+	//const vector<Figure> vaos = { attribs1, attribs2, attribs3, attribs4, attribs5 };
+	FigureDraw* pFd = new Figure3(&vertex_buffer_data[0], sizeof(vertex_buffer_data));
+	pWindow->RenderLoop(programIds, pFd);
 
+	delete pFd;
 	delete pWindow;
 	return 0;
 }

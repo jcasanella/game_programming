@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\private\Figure.cpp" />
+    <ClCompile Include="source\private\Figure3.cpp" />
     <ClCompile Include="source\private\glad.c" />
     <ClCompile Include="source\private\main.cpp" />
     <ClCompile Include="source\private\Shader.cpp" />
@@ -29,6 +30,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\header\Figure.h" />
+    <ClInclude Include="source\header\Figure3.h" />
+    <ClInclude Include="source\header\FigureDraw.h" />
     <ClInclude Include="source\header\Resources.h" />
     <ClInclude Include="source\header\Shader.h" />
     <ClInclude Include="source\header\Vertexs.h" />

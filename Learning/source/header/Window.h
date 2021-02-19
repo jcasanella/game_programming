@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Figure.h"
+#include "FigureDraw.h"
 
 namespace GameEngine {
 
@@ -16,7 +17,8 @@ namespace GameEngine {
 		int BuildWindow();
 		void Terminate();
 
-		void RenderLoop(const std::vector<GLuint>& programIds, const std::vector<Figure>& vaos);
+		//void RenderLoop(const std::vector<GLuint>& programIds, const std::vector<Figure>& vaos);
+		void RenderLoop(const std::vector<GLuint>& programIds, FigureDraw* fd);
 
 		inline GLFWwindow* GetWindow() const { return m_pWindow; }
 

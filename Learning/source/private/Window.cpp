@@ -86,7 +86,8 @@ namespace GameEngine {
 		glfwSetKeyCallback(m_pWindow, process_input_callback);
 	}
 
-	void Window::RenderLoop(const std::vector<GLuint>& programIds, const std::vector<Figure>& vaoIds)
+	//void Window::RenderLoop(const std::vector<GLuint>& programIds, const std::vector<Figure>& vaoIds)
+	void Window::RenderLoop(const std::vector<GLuint>& programIds, FigureDraw* fd)
 	{
 		g_totalSize = programIds.size();
 
@@ -104,11 +105,13 @@ namespace GameEngine {
 			}
 
 			// Draw the Object
-			Draw(vaoIds[g_indexVAO]);
+			/*Draw(vaoIds[g_indexVAO]);
 			if (g_type == MULTIPLE_VAO)
 			{
 				Draw(vaoIds[g_indexVAO + 1]);
-			}
+			}*/
+			
+			fd->Draw();
 
 			glfwSwapBuffers(m_pWindow);
 			glfwPollEvents();
