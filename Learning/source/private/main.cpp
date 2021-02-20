@@ -72,10 +72,15 @@ int main() {
 	}
 
 	//const vector<Figure> vaos = { attribs1, attribs2, attribs3, attribs4, attribs5 };
-	FigureDraw* pFd = new Figure3(&vertex_buffer_data[0], sizeof(vertex_buffer_data));
-	pWindow->RenderLoop(programIds, pFd);
+	FigureDraw* pFd1 = new Figure3(&vertex_buffer_data[0], sizeof(vertex_buffer_data));	// triangle
+	FigureDraw* pFd2 = new Figure3(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), &indexes_data[0], sizeof(indexes_data));	// rectangle
+	FigureDraw* pFd3 = new Figure3(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3));	// double triangle
+	std::vector<FigureDraw*> pFds = { pFd1, pFd2, pFd3 };
+	pWindow->RenderLoop(programIds, pFds);
 
-	delete pFd;
+	delete pFd3;
+	delete pFd2;
+	delete pFd1;
 	delete pWindow;
 	return 0;
 }

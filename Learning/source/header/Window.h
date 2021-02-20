@@ -18,7 +18,7 @@ namespace GameEngine {
 		void Terminate();
 
 		//void RenderLoop(const std::vector<GLuint>& programIds, const std::vector<Figure>& vaos);
-		void RenderLoop(const std::vector<GLuint>& programIds, FigureDraw* fd);
+		void RenderLoop(const std::vector<GLuint>& programIds, std::vector<FigureDraw*> fds);
 
 		inline GLFWwindow* GetWindow() const { return m_pWindow; }
 

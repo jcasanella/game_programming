@@ -5,7 +5,7 @@
 
 namespace GameEngine {
 
-	enum DrawType {
+/*	enum DrawType {
 		TRIANGLE,
 		RECTANGLE,
 		DOUBLE_TRIANGLE,
@@ -14,11 +14,11 @@ namespace GameEngine {
 		SIZE_DRAW_TYPE
 	};
 	DrawType g_type = TRIANGLE;
-
+	*/
 	int g_indexProgram = 0;
 	int g_totalSize = 0;
-
 	int g_indexVAO = 0;
+	int g_totalVAO = 0;
 
 	// Define callbacks
 	void framebuffer_size_callback(GLFWwindow*, int width, int height);
@@ -87,9 +87,10 @@ namespace GameEngine {
 	}
 
 	//void Window::RenderLoop(const std::vector<GLuint>& programIds, const std::vector<Figure>& vaoIds)
-	void Window::RenderLoop(const std::vector<GLuint>& programIds, FigureDraw* fd)
+	void Window::RenderLoop(const std::vector<GLuint>& programIds, std::vector<FigureDraw*> fds)
 	{
 		g_totalSize = programIds.size();
+		g_totalVAO = fds.size();
 
 		while (!glfwWindowShouldClose(m_pWindow)) {
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -111,13 +112,14 @@ namespace GameEngine {
 				Draw(vaoIds[g_indexVAO + 1]);
 			}*/
 			
-			fd->Draw();
+			FigureDraw* pFd = fds.at(g_indexVAO);
+			pFd->Draw();
 
 			glfwSwapBuffers(m_pWindow);
 			glfwPollEvents();
 		}
 	}
-
+	/*
 	void Window::Draw(const Figure& VAO)
 	{
 		glBindVertexArray(VAO.vao);
@@ -142,7 +144,7 @@ namespace GameEngine {
 
 		glBindVertexArray(0);			// unbinds
 	}
-
+	*/
 	// Not class methods
 	// Callbacks
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -162,9 +164,11 @@ namespace GameEngine {
 		}
 
 		if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-			g_type = static_cast<DrawType>((static_cast<int>(g_type) + 1) % static_cast<int>(DrawType::SIZE_DRAW_TYPE));
-			g_indexVAO = static_cast<int>(g_type);
-			std::cout << "A pressed, changing image " << g_type << std::endl;
+			//g_type = static_cast<DrawType>((static_cast<int>(g_type) + 1) % static_cast<int>(DrawType::SIZE_DRAW_TYPE));
+			//g_indexVAO = static_cast<int>(g_type);
+			++g_indexVAO;
+			g_indexVAO = g_indexVAO % g_totalVAO;
+		//	std::cout << "A pressed, changing image " << g_type << std::endl;
 		}
 	}
 

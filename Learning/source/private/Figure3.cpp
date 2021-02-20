@@ -2,16 +2,20 @@
 
 namespace GameEngine {
 
-	Figure3::Figure3(const GLfloat* data, ULLong dataSize) {
+	Figure3::Figure3(const GLfloat* data, ULLong dataSize): m_withIndex(false) {
 		PrepareVAO(data, dataSize);
 		BuildVAOAttrPointer();
+
+		m_vertexDraw = GetVertexDraw(dataSize);
 	}
 
-	Figure3::Figure3(const GLfloat* data, ULLong dataSize, const GLuint* index, ULLong indexSize)
+	Figure3::Figure3(const GLfloat* data, ULLong dataSize, const GLuint* index, ULLong indexSize): m_withIndex(true)
 	{
 		PrepareVAO(data, dataSize);
 		BuildEBO(index, indexSize);
 		BuildVAOAttrPointer();
+
+		m_indexDraw = GetIndexDraw(indexSize);
 	}
 
 	void Figure3::PrepareVAO(const GLfloat* data, ULLong dataSize)
@@ -111,8 +115,10 @@ namespace GameEngine {
 	{
 		glBindVertexArray(m_vao);
 		glEnableVertexAttribArray(0);	// same as location in the vertex shader
-
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		if (!m_withIndex)
+			glDrawArrays(GL_TRIANGLES, 0, m_vertexDraw);
+		else
+			glDrawElements(GL_TRIANGLES, m_indexDraw, GL_UNSIGNED_INT, 0);
 		
 		glDisableVertexAttribArray(0);
 		glBindVertexArray(0);			// unbind

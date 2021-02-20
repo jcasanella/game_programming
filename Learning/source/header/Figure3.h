@@ -16,11 +16,14 @@ namespace GameEngine {
 
 	private:
 		void PrepareVAO(const GLfloat* data, ULLong dataSize);
-		void BuildEBO(GLuint* index, ULLong indexSize);
+		void BuildEBO(const GLuint* index, ULLong indexSize);
 		void BuildVAOAttrPointer();
 
 	private:
 		GLuint m_vao;
+		bool m_withIndex;
+		int m_vertexDraw;
+		int m_indexDraw;
 	};
 
 }
