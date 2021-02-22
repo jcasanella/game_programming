@@ -12,13 +12,12 @@
 #include "Resources.h"
 #include "FigureDraw.h"
 #include "Figure3.h"
+#include "MultiFigure3.h"
 
 #include <cassert>
 
 using namespace std;
 using namespace GameEngine;
-
-//GLuint prepareImage(const GLfloat* data, ULLong sizeData, const GLuint* indexes=nullptr, ULLong sizeIndexes = 0);
 
 int main() {
 	const int WIDTH = 800;
@@ -75,9 +74,16 @@ int main() {
 	FigureDraw* pFd1 = new Figure3(&vertex_buffer_data[0], sizeof(vertex_buffer_data));	// triangle
 	FigureDraw* pFd2 = new Figure3(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), &indexes_data[0], sizeof(indexes_data));	// rectangle
 	FigureDraw* pFd3 = new Figure3(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3));	// double triangle
-	std::vector<FigureDraw*> pFds = { pFd1, pFd2, pFd3 };
+	
+	// Object to draw multiple figures with different VAOs
+	MultiFigure3* pMultiple = new MultiFigure3(&vertex_buffer_data4[0], sizeof(vertex_buffer_data4));
+	pMultiple->AddFigureToDraw(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5));
+	FigureDraw* pFd4 = dynamic_cast<FigureDraw*>(pMultiple);
+
+	std::vector<FigureDraw*> pFds = { pFd1, pFd2, pFd3, pFd4 };
 	pWindow->RenderLoop(programIds, pFds);
 
+	delete pMultiple;
 	delete pFd3;
 	delete pFd2;
 	delete pFd1;
@@ -85,12 +91,3 @@ int main() {
 	return 0;
 }
 
-/*
-GLuint prepareImage(const GLfloat* vertex_data, ULLong sizeData, const GLuint* index_data, ULLong sizeIndex)
-{
-	Figure* pTriangle = new Figure(vertex_data, sizeData, index_data, sizeIndex);
-	GLuint VAO = pTriangle->Build();
-	delete pTriangle;
-
-	return VAO;
-}*/
