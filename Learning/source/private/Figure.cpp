@@ -1,4 +1,4 @@
-#include "Figure.h"
+/*#include "Figure.h"
 
 namespace GameEngine {
 
@@ -53,4 +53,4 @@ namespace GameEngine {
 
 		return attributes;
 	}
-}
+}*/

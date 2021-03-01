@@ -2,14 +2,14 @@
 
 namespace GameEngine {
 
-	Figure3::Figure3(const GLfloat* data, ULLong dataSize): m_withIndex(false) {
+	Figure3::Figure3(const GLfloat* data, ULLong dataSize, const std::vector<GLuint>& programIds): m_withIndex(false), m_programIds(programIds) {
 		PrepareVAO(data, dataSize);
 		BuildVAOAttrPointer();
 
 		m_vertexDraw = GetVertexDraw(dataSize);
 	}
 
-	Figure3::Figure3(const GLfloat* data, ULLong dataSize, const GLuint* index, ULLong indexSize): m_withIndex(true)
+	Figure3::Figure3(const GLfloat* data, ULLong dataSize, const GLuint* index, ULLong indexSize, const std::vector<GLuint>& programIds): m_withIndex(true), m_programIds(programIds)
 	{
 		PrepareVAO(data, dataSize);
 		BuildEBO(index, indexSize);

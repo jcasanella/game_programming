@@ -71,12 +71,12 @@ int main() {
 	}
 
 	//const vector<Figure> vaos = { attribs1, attribs2, attribs3, attribs4, attribs5 };
-	FigureDraw* pFd1 = new Figure3(&vertex_buffer_data[0], sizeof(vertex_buffer_data));	// triangle
-	FigureDraw* pFd2 = new Figure3(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), &indexes_data[0], sizeof(indexes_data));	// rectangle
-	FigureDraw* pFd3 = new Figure3(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3));	// double triangle
+	FigureDraw* pFd1 = new Figure3(&vertex_buffer_data[0], sizeof(vertex_buffer_data), programIds);	// triangle
+	FigureDraw* pFd2 = new Figure3(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), &indexes_data[0], sizeof(indexes_data), programIds);	// rectangle
+	FigureDraw* pFd3 = new Figure3(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3), programIds);	// double triangle
 	
 	// Object to draw multiple figures with different VAOs
-	MultiFigure3* pMultiple = new MultiFigure3(&vertex_buffer_data4[0], sizeof(vertex_buffer_data4));
+	MultiFigure3* pMultiple = new MultiFigure3(&vertex_buffer_data4[0], sizeof(vertex_buffer_data4), programIds);
 	pMultiple->AddFigureToDraw(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5));
 	FigureDraw* pFd4 = dynamic_cast<FigureDraw*>(pMultiple);
 

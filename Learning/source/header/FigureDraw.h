@@ -1,8 +1,12 @@
 #pragma once
 
+#include <glad/glad.h>
+
 #include "Figure.h"
 
 namespace GameEngine {
+
+	typedef unsigned long long ULLong;
 
 	class FigureDraw {
 	public:

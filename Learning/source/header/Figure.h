@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <glad/glad.h>
 #include <vector>
 
@@ -18,4 +18,4 @@ namespace GameEngine {
 	} Figure;
 
 	Figure BuildFigure(const GLfloat* data, ULLong dataSize, const STRIDE_SIZE& sizeVector, const GLuint* indexes = nullptr, ULLong indexesSize = 0);
-}
+}*/
