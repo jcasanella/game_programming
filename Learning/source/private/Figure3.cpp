@@ -1,5 +1,7 @@
 #include "Figure3.h"
 
+#include <GLFW/glfw3.h>
+
 namespace GameEngine {
 
 	Figure3::Figure3(const GLfloat* data, ULLong dataSize, const std::vector<GLuint>& programIds): m_withIndex(false), m_programIds(programIds) {
@@ -61,8 +63,17 @@ namespace GameEngine {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize, index, GL_STATIC_DRAW);
 	}
 
-	void Figure3::Draw()
+	int Figure3::Draw(int indexProgram)
 	{
+		indexProgram %= m_programIds.size();
+		glUseProgram(m_programIds[indexProgram]);
+		if (indexProgram == m_programIds.size() - 1) {
+			float timeValue = glfwGetTime();
+			float greenValue = sin(timeValue) / 2.0f + 0.5f;
+			int vertexColorLocation = glGetUniformLocation(m_programIds[indexProgram], "ourColor");
+			glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		}
+
 		glBindVertexArray(m_vao);
 		glEnableVertexAttribArray(0);	// same as location in the vertex shader
 		if (!m_withIndex)
@@ -72,6 +83,8 @@ namespace GameEngine {
 		
 		glDisableVertexAttribArray(0);
 		glBindVertexArray(0);			// unbind
+
+		return indexProgram;
 	}
 
 }

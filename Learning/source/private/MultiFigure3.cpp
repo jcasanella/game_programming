@@ -1,5 +1,7 @@
 #include "MultiFigure3.h"
 
+#include <GLFW/glfw3.h>
+
 namespace GameEngine {
 
 	MultiFigure3::MultiFigure3(const GLfloat* data, ULLong dataSize, const std::vector<GLuint>& programIds): m_programIds(programIds)
@@ -55,10 +57,21 @@ namespace GameEngine {
 		glBindVertexArray(0);	// unbind VAO
 	}
 
-	void MultiFigure3::Draw() {
+	int MultiFigure3::Draw(int indexProgram) {
+		indexProgram %= m_programIds.size();
+		glUseProgram(m_programIds[indexProgram]);
+		if (indexProgram == m_programIds.size() - 1) {
+			float timeValue = glfwGetTime();
+			float greenValue = sin(timeValue) / 2.0f + 0.5f;
+			int vertexColorLocation = glGetUniformLocation(m_programIds[indexProgram], "ourColor");
+			glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		}
+
 		for (auto attr : m_VAOs) {
 			DrawFigure(attr);
 		}
+
+		return indexProgram;
 	}
 
 	void MultiFigure3::DrawFigure(const Attributes& attr)

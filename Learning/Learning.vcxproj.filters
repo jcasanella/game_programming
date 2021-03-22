@@ -32,9 +32,6 @@
     <ClCompile Include="source\private\Shader.cpp">
       <Filter>Source\Source</Filter>
     </ClCompile>
-    <ClCompile Include="source\private\Figure.cpp">
-      <Filter>Source\Source</Filter>
-    </ClCompile>
     <ClCompile Include="source\private\Figure3.cpp">
       <Filter>Source\Source</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
       <Filter>Source\Header</Filter>
     </ClInclude>
     <ClInclude Include="source\header\Shader.h">
-      <Filter>Source\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="source\header\Figure.h">
       <Filter>Source\Header</Filter>
     </ClInclude>
     <ClInclude Include="source\header\Resources.h">

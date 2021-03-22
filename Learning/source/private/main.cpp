@@ -7,7 +7,6 @@
 
 #include "Window.h"
 #include "Shader.h"
-#include "Figure.h"
 #include "Vertexs.h"
 #include "Resources.h"
 #include "FigureDraw.h"
@@ -18,6 +17,8 @@
 
 using namespace std;
 using namespace GameEngine;
+
+GLuint buildShaderProgram(const char* vertex_shader, const char* fragment_shader);
 
 int main() {
 	const int WIDTH = 800;
@@ -42,16 +43,7 @@ int main() {
 	// objects you want to draw, you first generate / configure all the VAOs(and thus the required VBO and
 	// attribute pointers) and store those for later use.The moment we want to draw one of our objects, we
 	// take the corresponding VAO, bind it, then draw the object and unbind the VAO again.
-	/*Figure attribs1 = BuildFigure(&vertex_buffer_data[0], sizeof(vertex_buffer_data), STRIDE_3);
-
-	Figure attribs2 = BuildFigure(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), STRIDE_3, &indexes_data[0], sizeof(indexes_data));
-
-	Figure attribs3 = BuildFigure(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3), STRIDE_3);	
-
-	Figure attribs4 = BuildFigure(&vertex_buffer_data4[0], sizeof(vertex_buffer_data4), STRIDE_3);
-
-	Figure attribs5 = BuildFigure(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5), STRIDE_3);
-
+	/*
 	Figure attribs6 = BuildFigure(&vertex_buffer_with_colors[0], sizeof(vertex_buffer_with_colors), STRIDE_6);*/
 
 	/*const GLfloat vertex_buffer_with_colors[] = {
@@ -62,15 +54,15 @@ int main() {
 
 	vector<GLuint> programIds;
 	for (int idx = 0; idx < NUM_SHADERS; idx++) {
-		Shader* pShader = new Shader();
-		pShader->CompileVertexShader(SHADERS[idx][0]);
-		pShader->CompileFragmentShader(SHADERS[idx][1]);
-		GLuint programId = pShader->CompileShaderProgram();
+		GLuint programId = buildShaderProgram(SHADERS[idx][0], SHADERS[idx][1]);
 		programIds.push_back(programId);
-		delete pShader;	// 	NOTE: Deleting the Object Shader will delete the program either
 	}
 
-	//const vector<Figure> vaos = { attribs1, attribs2, attribs3, attribs4, attribs5 };
+	// This programId has only one shader - used for VAO with 6 index
+	vector<GLuint> programIds2;
+	GLuint programId = buildShaderProgram(VERTEX_SHADER_COLOR, FRAGMENT_SHADER_COLOR);
+	programIds2.push_back(programId);
+
 	FigureDraw* pFd1 = new Figure3(&vertex_buffer_data[0], sizeof(vertex_buffer_data), programIds);	// triangle
 	FigureDraw* pFd2 = new Figure3(&vertex_buffer_data2[0], sizeof(vertex_buffer_data2), &indexes_data[0], sizeof(indexes_data), programIds);	// rectangle
 	FigureDraw* pFd3 = new Figure3(&vertex_buffer_data3[0], sizeof(vertex_buffer_data3), programIds);	// double triangle
@@ -80,14 +72,28 @@ int main() {
 	pMultiple->AddFigureToDraw(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5));
 	FigureDraw* pFd4 = dynamic_cast<FigureDraw*>(pMultiple);
 
-	std::vector<FigureDraw*> pFds = { pFd1, pFd2, pFd3, pFd4 };
-	pWindow->RenderLoop(programIds, pFds);
+	FigureDraw* pFd5 = new Figure3(&vertex_buffer_with_colors[0], sizeof(vertex_buffer_with_colors), programIds2);
 
+	std::vector<FigureDraw*> pFds = { pFd1, pFd2, pFd3, pFd4, pFd5 };
+	pWindow->RenderLoop(pFds);
+
+	delete pFd5;
 	delete pMultiple;
 	delete pFd3;
 	delete pFd2;
 	delete pFd1;
 	delete pWindow;
 	return 0;
+}
+
+GLuint buildShaderProgram(const char* vertex_shader, const char* fragment_shader)
+{
+	Shader* pShader = new Shader();
+	pShader->CompileVertexShader(vertex_shader);
+	pShader->CompileFragmentShader(fragment_shader);
+	GLuint programId = pShader->CompileShaderProgram();
+	delete pShader;
+
+	return programId;
 }
 

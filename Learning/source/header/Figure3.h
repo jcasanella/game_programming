@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "FigureDraw.h"
-#include "Figure.h"
 
 namespace GameEngine {
 
@@ -13,7 +12,7 @@ namespace GameEngine {
 		Figure3(const GLfloat* data, ULLong dataSize, const std::vector<GLuint>& programIds);
 		Figure3(const GLfloat* data, ULLong dataSize, const GLuint* index, ULLong indexSize, const std::vector<GLuint>& programIds);
 
-		virtual void Draw();
+		virtual int Draw(int indexProgram);
 
 	private:
 		void PrepareVAO(const GLfloat* data, ULLong dataSize);

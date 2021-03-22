@@ -17,7 +17,7 @@ namespace GameEngine {
 		MultiFigure3(const GLfloat* data, ULLong dataSize, const std::vector<GLuint>& programIds);
 
 		void AddFigureToDraw(const GLfloat* data, ULLong dataSize);
-		virtual void Draw();
+		virtual int Draw(int indexProgram);
 
 	private:
 		void DrawFigure(const Attributes& attr);

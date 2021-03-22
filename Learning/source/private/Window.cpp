@@ -5,18 +5,7 @@
 
 namespace GameEngine {
 
-/*	enum DrawType {
-		TRIANGLE,
-		RECTANGLE,
-		DOUBLE_TRIANGLE,
-		MULTIPLE_VAO,
-
-		SIZE_DRAW_TYPE
-	};
-	DrawType g_type = TRIANGLE;
-	*/
 	int g_indexProgram = 0;
-	int g_totalSize = 0;
 	int g_indexVAO = 0;
 	int g_totalVAO = 0;
 
@@ -86,65 +75,24 @@ namespace GameEngine {
 		glfwSetKeyCallback(m_pWindow, process_input_callback);
 	}
 
-	//void Window::RenderLoop(const std::vector<GLuint>& programIds, const std::vector<Figure>& vaoIds)
-	void Window::RenderLoop(const std::vector<GLuint>& programIds, std::vector<FigureDraw*> fds)
+	void Window::RenderLoop(const std::vector<FigureDraw*>& fds)
 	{
-		g_totalSize = programIds.size();
+		//g_totalSize = programIds.size();
 		g_totalVAO = fds.size();
 
 		while (!glfwWindowShouldClose(m_pWindow)) {
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			// Use our shader program before to render
-			glUseProgram(programIds[g_indexProgram]);
-			if (g_indexProgram == g_totalSize - 1) {
-				float timeValue = glfwGetTime();
-				float greenValue = sin(timeValue) / 2.0f + 0.5f;
-				int vertexColorLocation = glGetUniformLocation(programIds[g_indexProgram], "ourColor");
-				glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-			}
-
 			// Draw the Object
-			/*Draw(vaoIds[g_indexVAO]);
-			if (g_type == MULTIPLE_VAO)
-			{
-				Draw(vaoIds[g_indexVAO + 1]);
-			}*/
-			
 			FigureDraw* pFd = fds.at(g_indexVAO);
-			pFd->Draw();
+			g_indexProgram = pFd->Draw(g_indexProgram);
 
 			glfwSwapBuffers(m_pWindow);
 			glfwPollEvents();
 		}
 	}
-	/*
-	void Window::Draw(const Figure& VAO)
-	{
-		glBindVertexArray(VAO.vao);
 
-		for (std::vector<int>::const_iterator it = VAO.vertextAttrPointer.begin(); it != VAO.vertextAttrPointer.end(); ++it) {
-			glEnableVertexAttribArray(*it);	// same as location in the vertex shader
-		}
-
-		if (g_type == TRIANGLE || g_type == MULTIPLE_VAO) {
-			glDrawArrays(GL_TRIANGLES, 0, 3);
-		}
-		else if (g_type == DOUBLE_TRIANGLE) {
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-		}
-		else {
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		}
-
-		for (std::vector<int>::const_reverse_iterator it = VAO.vertextAttrPointer.rbegin(); it != VAO.vertextAttrPointer.rend(); ++it) {
-			glDisableVertexAttribArray(*it);
-		}
-
-		glBindVertexArray(0);			// unbinds
-	}
-	*/
 	// Not class methods
 	// Callbacks
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -159,16 +107,13 @@ namespace GameEngine {
 		}
 
 		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-			g_indexProgram = ++g_indexProgram % g_totalSize;
+			++g_indexProgram;
 			std::cout << "Space pressed, changing color " << g_indexProgram << std::endl;
 		}
 
 		if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-			//g_type = static_cast<DrawType>((static_cast<int>(g_type) + 1) % static_cast<int>(DrawType::SIZE_DRAW_TYPE));
-			//g_indexVAO = static_cast<int>(g_type);
 			++g_indexVAO;
 			g_indexVAO = g_indexVAO % g_totalVAO;
-		//	std::cout << "A pressed, changing image " << g_type << std::endl;
 		}
 	}
 
