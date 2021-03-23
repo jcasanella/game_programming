@@ -38,6 +38,9 @@
     <ClCompile Include="source\private\MultiFigure3.cpp">
       <Filter>Source\Source</Filter>
     </ClCompile>
+    <ClCompile Include="source\private\Figure6.cpp">
+      <Filter>Source\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\VertexShader.glsl">
@@ -85,6 +88,9 @@
       <Filter>Source\Header</Filter>
     </ClInclude>
     <ClInclude Include="source\header\MultiFigure3.h">
+      <Filter>Source\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="source\header\Figure6.h">
       <Filter>Source\Header</Filter>
     </ClInclude>
   </ItemGroup>

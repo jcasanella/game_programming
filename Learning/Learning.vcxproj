@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\private\Figure3.cpp" />
+    <ClCompile Include="source\private\Figure6.cpp" />
     <ClCompile Include="source\private\glad.c" />
     <ClCompile Include="source\private\main.cpp" />
     <ClCompile Include="source\private\MultiFigure3.cpp" />
@@ -30,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\header\Figure3.h" />
+    <ClInclude Include="source\header\Figure6.h" />
     <ClInclude Include="source\header\FigureDraw.h" />
     <ClInclude Include="source\header\MultiFigure3.h" />
     <ClInclude Include="source\header\Resources.h" />

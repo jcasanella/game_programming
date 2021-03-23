@@ -11,6 +11,7 @@
 #include "Resources.h"
 #include "FigureDraw.h"
 #include "Figure3.h"
+#include "Figure6.h"
 #include "MultiFigure3.h"
 
 #include <cassert>
@@ -72,7 +73,7 @@ int main() {
 	pMultiple->AddFigureToDraw(&vertex_buffer_data5[0], sizeof(vertex_buffer_data5));
 	FigureDraw* pFd4 = dynamic_cast<FigureDraw*>(pMultiple);
 
-	FigureDraw* pFd5 = new Figure3(&vertex_buffer_with_colors[0], sizeof(vertex_buffer_with_colors), programIds2);
+	FigureDraw* pFd5 = new Figure6(&vertex_buffer_with_colors[0], sizeof(vertex_buffer_with_colors), programIds2);
 
 	std::vector<FigureDraw*> pFds = { pFd1, pFd2, pFd3, pFd4, pFd5 };
 	pWindow->RenderLoop(pFds);
